@@ -42,15 +42,15 @@ LOGO_MAX_SIZE = 420
 # ============================================================
 
 COMPETITIONS = {
-    "PL": "ظ„غŒع¯ ط¨ط±طھط± ط§ظ†ع¯ظ„غŒط³",
-    "PD": "ظ„ط§ظ„غŒع¯ط§",
-    "SA": "ط³ط±غŒ ط¢ ط§غŒطھط§ظ„غŒط§",
-    "BL1": "ط¨ظˆظ†ط¯ط³ظ„غŒع¯ط§",
-    "FL1": "ظ„غŒ¯ غ± ظپط±ط§ظ†ط³ظ‡",
-    "DED": "ط§ط±ط¯غŒظˆغŒط³ظ‡",
-    "PPL": "ظ„غŒع¯ ظ¾ط±طھط؛ط§ظ„",
-    "BSA": "ط³ط±غŒ ط¢ ط¨ط±ط²غŒظ„",
-    "CL": "ظ„غŒع¯ ظ‚ظ‡ط±ظ…ط§ظ†ط§ظ† ط§ط±ظˆظ¾ط§",
+    "PL": "ط¸â€‍ط؛إ’ط¹آ¯ ط·آ¨ط·آ±ط·ع¾ط·آ± ط·آ§ط¸â€ ط¹آ¯ط¸â€‍ط؛إ’ط·آ³",
+    "PD": "ط¸â€‍ط·آ§ط¸â€‍ط؛إ’ط¹آ¯ط·آ§",
+    "SA": "ط·آ³ط·آ±ط؛إ’ ط·آ¢ ط·آ§ط؛إ’ط·ع¾ط·آ§ط¸â€‍ط؛إ’ط·آ§",
+    "BL1": "ط·آ¨ط¸ث†ط¸â€ ط·آ¯ط·آ³ط¸â€‍ط؛إ’ط¹آ¯ط·آ§",
+    "FL1": "ط¸â€‍ط؛إ’آ¯ ط؛آ± ط¸ظ¾ط·آ±ط·آ§ط¸â€ ط·آ³ط¸â€،",
+    "DED": "ط·آ§ط·آ±ط·ع¾ط؛إ’ط¸ث†ط؛إ’ط·آ³ط¸â€،",
+    "PPL": "ط¸â€‍ط؛إ’ط¹آ¯ ط¸آ¾ط·آ±ط·ع¾ط·ط›ط·آ§ط¸â€‍",
+    "BSA": "ط·آ³ط·آ±ط؛إ’ ط·آ¢ ط·آ¨ط·آ±ط·آ²ط؛إ’ط¸â€‍",
+    "CL": "ط¸â€‍ط؛إ’ط¹آ¯ ط¸â€ڑط¸â€،ط·آ±ط¸â€¦ط·آ§ط¸â€ ط·آ§ط¸â€  ط·آ§ط·آ±ط¸ث†ط¸آ¾ط·آ§",
 }
 
 
@@ -85,126 +85,126 @@ LEAGUE_ICONS = {
 # ============================================================
 
 TEAM_NAMES = {
-    "Brentford FC": "ط¨ط±ظ†طھظپظˆط±ط¯",
-    "Chelsea FC": "ع†ظ„ط³غŒ",
-    "Arsenal FC": "ط¢ط±ط³ظ†ط§ظ„",
-    "Liverpool FC": "ظ„غŒظˆط±ط¾ظˆظ„",
-    "Manchester City FC": "ظ…ظ†ع†ط³طھط±ط³غŒطھغŒ",
-    "Manchester United FC": "ظ…ظ†ع†ط³طھط±غŒظˆظ†ط§غŒطھط¯",
-    "Tottenham Hotspur FC": "طھط§طھظ†ظ‡ط§ظ…",
-    "Newcastle United FC": "ظ†غŒظˆع©ط§ط³ظ„",
-    "Aston Villa FC": "ط§ط³طھظˆظ† ظˆغŒظ„ط§",
-    "Everton FC": "ط§ظˆط±طھظˆظ†",
-    "West Ham United FC": "ظˆط³طھظ‡ظ…",
-    "Fulham FC": "ظپظˆظ„ط§ظ…",
-    "Crystal Palace FC": "ع©ط±غŒط³طھط§ظ„ ظ¾ط§ظ„ط§ط³",
-    "Brighton & Hove Albion FC": "ط¨ط±غŒطھظˆظ†",
-    "Wolverhampton Wanderers FC": "ظˆظ„ظˆظ„ظˆط±ظ‡ظ…ظ¾طھظˆظ†",
-    "Nottingham Forest FC": "ظ†ط§طھغŒظ†ع¯ظ‡ط§ظ… ظپط§ط±ط³طھ",
-    "AFC Bournemouth": "ط¨ظˆط±ظ†ظ…ظˆط«",
-    "Burnley FC": "ط¨ط±ظ†ظ„غŒ",
-    "Leeds United FC": "ظ„غŒط¯ط²",
-    "Sunderland AFC": "ط³ط§ظ†ط¯ط±ظ„ظ†ط¯",
+    "Brentford FC": "ط·آ¨ط·آ±ط¸â€ ط·ع¾ط¸ظ¾ط¸ث†ط·آ±ط·آ¯",
+    "Chelsea FC": "ط¹â€ ط¸â€‍ط·آ³ط؛إ’",
+    "Arsenal FC": "ط·آ¢ط·آ±ط·آ³ط¸â€ ط·آ§ط¸â€‍",
+    "Liverpool FC": "ط¸â€‍ط؛إ’ط¸ث†ط·آ±ط·آ¾ط¸ث†ط¸â€‍",
+    "Manchester City FC": "ط¸â€¦ط¸â€ ط¹â€ ط·آ³ط·ع¾ط·آ±ط·آ³ط؛إ’ط·ع¾ط؛إ’",
+    "Manchester United FC": "ط¸â€¦ط¸â€ ط¹â€ ط·آ³ط·ع¾ط·آ±ط؛إ’ط¸ث†ط¸â€ ط·آ§ط؛إ’ط·ع¾ط·آ¯",
+    "Tottenham Hotspur FC": "ط·ع¾ط·آ§ط·ع¾ط¸â€ ط¸â€،ط·آ§ط¸â€¦",
+    "Newcastle United FC": "ط¸â€ ط؛إ’ط¸ث†ط¹آ©ط·آ§ط·آ³ط¸â€‍",
+    "Aston Villa FC": "ط·آ§ط·آ³ط·ع¾ط¸ث†ط¸â€  ط¸ث†ط؛إ’ط¸â€‍ط·آ§",
+    "Everton FC": "ط·آ§ط¸ث†ط·آ±ط·ع¾ط¸ث†ط¸â€ ",
+    "West Ham United FC": "ط¸ث†ط·آ³ط·ع¾ط¸â€،ط¸â€¦",
+    "Fulham FC": "ط¸ظ¾ط¸ث†ط¸â€‍ط·آ§ط¸â€¦",
+    "Crystal Palace FC": "ط¹آ©ط·آ±ط؛إ’ط·آ³ط·ع¾ط·آ§ط¸â€‍ ط¸آ¾ط·آ§ط¸â€‍ط·آ§ط·آ³",
+    "Brighton & Hove Albion FC": "ط·آ¨ط·آ±ط؛إ’ط·ع¾ط¸ث†ط¸â€ ",
+    "Wolverhampton Wanderers FC": "ط¸ث†ط¸â€‍ط¸ث†ط¸â€‍ط¸ث†ط·آ±ط¸â€،ط¸â€¦ط¸آ¾ط·ع¾ط¸ث†ط¸â€ ",
+    "Nottingham Forest FC": "ط¸â€ ط·آ§ط·ع¾ط؛إ’ط¸â€ ط¹آ¯ط¸â€،ط·آ§ط¸â€¦ ط¸ظ¾ط·آ§ط·آ±ط·آ³ط·ع¾",
+    "AFC Bournemouth": "ط·آ¨ط¸ث†ط·آ±ط¸â€ ط¸â€¦ط¸ث†ط·آ«",
+    "Burnley FC": "ط·آ¨ط·آ±ط¸â€ ط¸â€‍ط؛إ’",
+    "Leeds United FC": "ط¸â€‍ط؛إ’ط·آ¯ط·آ²",
+    "Sunderland AFC": "ط·آ³ط·آ§ط¸â€ ط·آ¯ط·آ±ط¸â€‍ط¸â€ ط·آ¯",
 
-    "Real Madrid CF": "ط±ط¦ط§ظ„ ظ…ط§ط¯ط±غŒط¯",
-    "FC Barcelona": "ط¨ط§ط±ط³ظ„ظˆظ†ط§",
-    "RCD Espanyol de Barcelona": "ط§ط³ظ¾ط§ظ†غŒظˆظ„",
-    "Elche CF": "ط§ظ„ع†ظ‡",
-    "Club Atlأ©tico de Madrid": "ط§طھظ„طھغŒع©ظˆ ظ…ط§ط¯ط±غŒط¯",
-    "Club Atlط£آ©tico de Madrid": "ط§طھظ„طھغŒع©ظˆ ظ…ط§ط¯ط±غŒط¯",
-    "Sevilla FC": "ط³ظˆغŒط§",
-    "Valencia CF": "ظˆط§ظ„ظ†ط³غŒط§",
-    "Villarreal CF": "ظˆغŒط§ط±ط¦ط§ظ„",
-    "Athletic Club": "ط§طھظ„طھغŒع© ط¨غŒظ„ط¨ط§ط¦ظˆ",
-    "Real Betis Balompiأ©": "ط±ط¦ط§ظ„ ط¨طھغŒط³",
-    "Real Betis Balompiط£آ©": "ط±ط¦ط§ظ„ ط¨طھغŒط³",
-    "Getafe CF": "ط®طھط§ظپظ‡",
-    "Girona FC": "عکغŒط±ظˆظ†ط§",
-    "RC Celta de Vigo": "ط³ظ„طھط§ظˆغŒع¯ظˆ",
-    "CA Osasuna": "ط§ظˆط³ط§ط³ظˆظ†ط§",
-    "Rayo Vallecano de Madrid": "ط±ط§غŒظˆ ظˆط§غŒع©ط§ظ†ظˆ",
-    "RCD Mallorca": "ظ…ط§غŒظˆط±ع©ط§",
-    "Deportivo Alavأ©s": "ط¢ظ„ط§ظˆط³",
-    "Deportivo Alavط£آ©s": "ط¢ظ„ط§ظˆط³",
-    "Real Sociedad de Fأ؛tbol": "ط±ط¦ط§ظ„ ط³ظˆط³غŒط¯ط§ط¯",
-    "Real Sociedad de Fط£ط›tbol": "ط±ط¦ط§ظ„ ط³ظˆط³غŒط¯ط§ط¯",
+    "Real Madrid CF": "ط·آ±ط·آ¦ط·آ§ط¸â€‍ ط¸â€¦ط·آ§ط·آ¯ط·آ±ط؛إ’ط·آ¯",
+    "FC Barcelona": "ط·آ¨ط·آ§ط·آ±ط·آ³ط¸â€‍ط¸ث†ط¸â€ ط·آ§",
+    "RCD Espanyol de Barcelona": "ط·آ§ط·آ³ط¸آ¾ط·آ§ط¸â€ ط؛إ’ط¸ث†ط¸â€‍",
+    "Elche CF": "ط·آ§ط¸â€‍ط¹â€ ط¸â€،",
+    "Club Atlط£آ©tico de Madrid": "ط·آ§ط·ع¾ط¸â€‍ط·ع¾ط؛إ’ط¹آ©ط¸ث† ط¸â€¦ط·آ§ط·آ¯ط·آ±ط؛إ’ط·آ¯",
+    "Club Atlط·آ£ط¢آ©tico de Madrid": "ط·آ§ط·ع¾ط¸â€‍ط·ع¾ط؛إ’ط¹آ©ط¸ث† ط¸â€¦ط·آ§ط·آ¯ط·آ±ط؛إ’ط·آ¯",
+    "Sevilla FC": "ط·آ³ط¸ث†ط؛إ’ط·آ§",
+    "Valencia CF": "ط¸ث†ط·آ§ط¸â€‍ط¸â€ ط·آ³ط؛إ’ط·آ§",
+    "Villarreal CF": "ط¸ث†ط؛إ’ط·آ§ط·آ±ط·آ¦ط·آ§ط¸â€‍",
+    "Athletic Club": "ط·آ§ط·ع¾ط¸â€‍ط·ع¾ط؛إ’ط¹آ© ط·آ¨ط؛إ’ط¸â€‍ط·آ¨ط·آ§ط·آ¦ط¸ث†",
+    "Real Betis Balompiط£آ©": "ط·آ±ط·آ¦ط·آ§ط¸â€‍ ط·آ¨ط·ع¾ط؛إ’ط·آ³",
+    "Real Betis Balompiط·آ£ط¢آ©": "ط·آ±ط·آ¦ط·آ§ط¸â€‍ ط·آ¨ط·ع¾ط؛إ’ط·آ³",
+    "Getafe CF": "ط·آ®ط·ع¾ط·آ§ط¸ظ¾ط¸â€،",
+    "Girona FC": "ط¹ع©ط؛إ’ط·آ±ط¸ث†ط¸â€ ط·آ§",
+    "RC Celta de Vigo": "ط·آ³ط¸â€‍ط·ع¾ط·آ§ط¸ث†ط؛إ’ط¹آ¯ط¸ث†",
+    "CA Osasuna": "ط·آ§ط¸ث†ط·آ³ط·آ§ط·آ³ط¸ث†ط¸â€ ط·آ§",
+    "Rayo Vallecano de Madrid": "ط·آ±ط·آ§ط؛إ’ط¸ث† ط¸ث†ط·آ§ط؛إ’ط¹آ©ط·آ§ط¸â€ ط¸ث†",
+    "RCD Mallorca": "ط¸â€¦ط·آ§ط؛إ’ط¸ث†ط·آ±ط¹آ©ط·آ§",
+    "Deportivo Alavط£آ©s": "ط·آ¢ط¸â€‍ط·آ§ط¸ث†ط·آ³",
+    "Deportivo Alavط·آ£ط¢آ©s": "ط·آ¢ط¸â€‍ط·آ§ط¸ث†ط·آ³",
+    "Real Sociedad de Fط£ط›tbol": "ط·آ±ط·آ¦ط·آ§ط¸â€‍ ط·آ³ط¸ث†ط·آ³ط؛إ’ط·آ¯ط·آ§ط·آ¯",
+    "Real Sociedad de Fط·آ£ط·â€؛tbol": "ط·آ±ط·آ¦ط·آ§ط¸â€‍ ط·آ³ط¸ث†ط·آ³ط؛إ’ط·آ¯ط·آ§ط·آ¯",
 
-    "FC Internazionale Milano": "ط§غŒظ†طھط±",
-    "Inter Milan": "ط§غŒظ†ط±",
-    "AC Milan": "ط¢ط´ ظ…غŒظ„ط§ظ†",
-    "Juventus FC": "غŒظˆظˆظ†طھظˆط³",
-    "SSC Napoli": "ظ†ط§ظ¾ظˆظ„غŒ",
-    "AS Roma": "ط±ظ…",
-    "SS Lazio": "ظ„ط§طھط²غŒظˆ",
-    "Atalanta BC": "ط¢طھط§ظ„ط§ظ†طھط§",
-    "ACF Fiorentina": "ظپغŒظˆط±ظ†طھغŒظ†ط§",
-    "Torino FC": "طھظˆط±غŒظ†ظˆ",
-    "Bologna FC 1909": "ط¨ظˆظ„ظˆظ†غŒط§",
-    "Genoa CFC": "ط¬ظ†ظˆط§",
-    "Udinese Calcio": "ط§ظˆط¯غŒظ†ط²ظ‡",
-    "Parma Calcio 1913": "ظ¾ط§ط±ظ…ط§",
-    "US Lecce": "ظ„ع†ظ‡",
-    "Cagliari Calcio": "ع©ط§ظ„غŒط§ط±غŒ",
-    "Como 1907": "ع©ظˆظ…ظˆ",
-    "US Sassuolo Calcio": "ط³ط§ط³ظˆظ„ظˆ",
-    "Sassuolo Calcio": "ط³ط§ط³ظˆظ„ظˆ",
+    "FC Internazionale Milano": "ط·آ§ط؛إ’ط¸â€ ط·ع¾ط·آ±",
+    "Inter Milan": "ط·آ§ط؛إ’ط¸â€ ط·آ±",
+    "AC Milan": "ط·آ¢ط·آ´ ط¸â€¦ط؛إ’ط¸â€‍ط·آ§ط¸â€ ",
+    "Juventus FC": "ط؛إ’ط¸ث†ط¸ث†ط¸â€ ط·ع¾ط¸ث†ط·آ³",
+    "SSC Napoli": "ط¸â€ ط·آ§ط¸آ¾ط¸ث†ط¸â€‍ط؛إ’",
+    "AS Roma": "ط·آ±ط¸â€¦",
+    "SS Lazio": "ط¸â€‍ط·آ§ط·ع¾ط·آ²ط؛إ’ط¸ث†",
+    "Atalanta BC": "ط·آ¢ط·ع¾ط·آ§ط¸â€‍ط·آ§ط¸â€ ط·ع¾ط·آ§",
+    "ACF Fiorentina": "ط¸ظ¾ط؛إ’ط¸ث†ط·آ±ط¸â€ ط·ع¾ط؛إ’ط¸â€ ط·آ§",
+    "Torino FC": "ط·ع¾ط¸ث†ط·آ±ط؛إ’ط¸â€ ط¸ث†",
+    "Bologna FC 1909": "ط·آ¨ط¸ث†ط¸â€‍ط¸ث†ط¸â€ ط؛إ’ط·آ§",
+    "Genoa CFC": "ط·آ¬ط¸â€ ط¸ث†ط·آ§",
+    "Udinese Calcio": "ط·آ§ط¸ث†ط·آ¯ط؛إ’ط¸â€ ط·آ²ط¸â€،",
+    "Parma Calcio 1913": "ط¸آ¾ط·آ§ط·آ±ط¸â€¦ط·آ§",
+    "US Lecce": "ط¸â€‍ط¹â€ ط¸â€،",
+    "Cagliari Calcio": "ط¹آ©ط·آ§ط¸â€‍ط؛إ’ط·آ§ط·آ±ط؛إ’",
+    "Como 1907": "ط¹آ©ط¸ث†ط¸â€¦ط¸ث†",
+    "US Sassuolo Calcio": "ط·آ³ط·آ§ط·آ³ط¸ث†ط¸â€‍ط¸ث†",
+    "Sassuolo Calcio": "ط·آ³ط·آ§ط·آ³ط¸ث†ط¸â€‍ط¸ث†",
 
-    "FC Bayern Mأ¼nchen": "ط¨ط§غŒط±ظ† ظ…ظˆظ†غŒط®",
-    "FC Bayern Mط£آ¼nchen": "ط¨ط§غŒط±ظ† ظ…ظˆظ†غŒط®",
-    "Borussia Dortmund": "ط¯ظˆط±طھظ…ظˆظ†ط¯",
-    "RB Leipzig": "ظ„ط§غŒظ¾ط²غŒع¯",
-    "Bayer 04 Leverkusen": "ط¨ط§غŒط±ظ„ظˆط±ع©ظˆط²ظ†",
-    "Eintracht Frankfurt": "ط¢غŒظ†طھط±ط§ط®طھ ظپط±ط§ظ†ع©ظپظˆط±طھ",
-    "VfB Stuttgart": "ط§ط´طھظˆطھع¯ط§ط±طھ",
-    "VfL Wolfsburg": "ظˆظ„ظپط³ط¨ظˆط±ع¯",
-    "Borussia Mأ¶nchengladbach": "ظ…ظˆظ†ط´ظ† ع¯ظ„ط§ط¯ط¨ط§ط®",
-    "Borussia Mط£آ¶nchengladbach": "ظ…ظˆظ†ط´ظ† ع¯ظ„ط§ط¯ط¨ط§ط®",
-    "SV Werder Bremen": "ظˆط±ط¯ط±ط¨ط±ظ…ظ†",
-    "1. FSV Mainz 05": "ظ…ط§غŒظ†ط²",
-    "TSG 1899 Hoffenheim": "ظ‡ظˆظپظ†ظ‡ط§غŒظ…",
-    "Sport-Club Freiburg": "ظپط±ط§غŒط¨ظˆط±ع¯",
-    "FC Augsburg": "ط¢ع¯ط³ط¨ظˆط±ع¯",
-    "1. FC Union Berlin": "غŒظˆظ†غŒظˆظ† ط¨ط±ظ„غŒظ†",
-    "1. FC Kأ¶ln": "ع©ظ„ظ†",
-    "1. FC Kط£آ¶ln": "ع©ظ„ظ†",
-    "Hamburger SV": "ظ‡ط§ظ…ط¨ظˆط±ع¯",
+    "FC Bayern Mط£آ¼nchen": "ط·آ¨ط·آ§ط؛إ’ط·آ±ط¸â€  ط¸â€¦ط¸ث†ط¸â€ ط؛إ’ط·آ®",
+    "FC Bayern Mط·آ£ط¢آ¼nchen": "ط·آ¨ط·آ§ط؛إ’ط·آ±ط¸â€  ط¸â€¦ط¸ث†ط¸â€ ط؛إ’ط·آ®",
+    "Borussia Dortmund": "ط·آ¯ط¸ث†ط·آ±ط·ع¾ط¸â€¦ط¸ث†ط¸â€ ط·آ¯",
+    "RB Leipzig": "ط¸â€‍ط·آ§ط؛إ’ط¸آ¾ط·آ²ط؛إ’ط¹آ¯",
+    "Bayer 04 Leverkusen": "ط·آ¨ط·آ§ط؛إ’ط·آ±ط¸â€‍ط¸ث†ط·آ±ط¹آ©ط¸ث†ط·آ²ط¸â€ ",
+    "Eintracht Frankfurt": "ط·آ¢ط؛إ’ط¸â€ ط·ع¾ط·آ±ط·آ§ط·آ®ط·ع¾ ط¸ظ¾ط·آ±ط·آ§ط¸â€ ط¹آ©ط¸ظ¾ط¸ث†ط·آ±ط·ع¾",
+    "VfB Stuttgart": "ط·آ§ط·آ´ط·ع¾ط¸ث†ط·ع¾ط¹آ¯ط·آ§ط·آ±ط·ع¾",
+    "VfL Wolfsburg": "ط¸ث†ط¸â€‍ط¸ظ¾ط·آ³ط·آ¨ط¸ث†ط·آ±ط¹آ¯",
+    "Borussia Mط£آ¶nchengladbach": "ط¸â€¦ط¸ث†ط¸â€ ط·آ´ط¸â€  ط¹آ¯ط¸â€‍ط·آ§ط·آ¯ط·آ¨ط·آ§ط·آ®",
+    "Borussia Mط·آ£ط¢آ¶nchengladbach": "ط¸â€¦ط¸ث†ط¸â€ ط·آ´ط¸â€  ط¹آ¯ط¸â€‍ط·آ§ط·آ¯ط·آ¨ط·آ§ط·آ®",
+    "SV Werder Bremen": "ط¸ث†ط·آ±ط·آ¯ط·آ±ط·آ¨ط·آ±ط¸â€¦ط¸â€ ",
+    "1. FSV Mainz 05": "ط¸â€¦ط·آ§ط؛إ’ط¸â€ ط·آ²",
+    "TSG 1899 Hoffenheim": "ط¸â€،ط¸ث†ط¸ظ¾ط¸â€ ط¸â€،ط·آ§ط؛إ’ط¸â€¦",
+    "Sport-Club Freiburg": "ط¸ظ¾ط·آ±ط·آ§ط؛إ’ط·آ¨ط¸ث†ط·آ±ط¹آ¯",
+    "FC Augsburg": "ط·آ¢ط¹آ¯ط·آ³ط·آ¨ط¸ث†ط·آ±ط¹آ¯",
+    "1. FC Union Berlin": "ط؛إ’ط¸ث†ط¸â€ ط؛إ’ط¸ث†ط¸â€  ط·آ¨ط·آ±ط¸â€‍ط؛إ’ط¸â€ ",
+    "1. FC Kط£آ¶ln": "ط¹آ©ط¸â€‍ط¸â€ ",
+    "1. FC Kط·آ£ط¢آ¶ln": "ط¹آ©ط¸â€‍ط¸â€ ",
+    "Hamburger SV": "ط¸â€،ط·آ§ط¸â€¦ط·آ¨ط¸ث†ط·آ±ط¹آ¯",
 
-    "Paris Saint-Germain FC": "ظ¾ط§ط±غŒ ط³ظ† عکط±ظ…ط§ظ†",
-    "Olympique de Marseille": "ظ…ط§ط±ط³غŒ",
-    "AS Monaco FC": "ظ…ظˆظ†ط§ع©ظˆ",
-    "Olympique Lyonnais": "ظ„غŒظˆظ†",
-    "Lille OSC": "ظ„غŒظ„",
-    "OGC Nice": "ظ†غŒط³",
-    "Stade Rennais FC 1901": "ط±ظ†",
-    "FC Nantes": "ظ†ط§ظ†طھ",
-    "Toulouse FC": "طھظˆظ„ظˆط²",
-    "RC Lens": "ظ„ط§ظ†ط³",
-    "Racing Club de Lens": "ظ„ط§ظ†ط³",
-    "RC Strasbourg Alsace": "ط§ط³طھط±ط§ط³ط¨ظˆط±ع¯",
+    "Paris Saint-Germain FC": "ط¸آ¾ط·آ§ط·آ±ط؛إ’ ط·آ³ط¸â€  ط¹ع©ط·آ±ط¸â€¦ط·آ§ط¸â€ ",
+    "Olympique de Marseille": "ط¸â€¦ط·آ§ط·آ±ط·آ³ط؛إ’",
+    "AS Monaco FC": "ط¸â€¦ط¸ث†ط¸â€ ط·آ§ط¹آ©ط¸ث†",
+    "Olympique Lyonnais": "ط¸â€‍ط؛إ’ط¸ث†ط¸â€ ",
+    "Lille OSC": "ط¸â€‍ط؛إ’ط¸â€‍",
+    "OGC Nice": "ط¸â€ ط؛إ’ط·آ³",
+    "Stade Rennais FC 1901": "ط·آ±ط¸â€ ",
+    "FC Nantes": "ط¸â€ ط·آ§ط¸â€ ط·ع¾",
+    "Toulouse FC": "ط·ع¾ط¸ث†ط¸â€‍ط¸ث†ط·آ²",
+    "RC Lens": "ط¸â€‍ط·آ§ط¸â€ ط·آ³",
+    "Racing Club de Lens": "ط¸â€‍ط·آ§ط¸â€ ط·آ³",
+    "RC Strasbourg Alsace": "ط·آ§ط·آ³ط·ع¾ط·آ±ط·آ§ط·آ³ط·آ¨ط¸ث†ط·آ±ط¹آ¯",
 
-    "AFC Ajax": "ط¢عکط§ع©ط³",
-    "PSV": "ط¢غŒظ†ط¯ظ‡ظˆظˆظ†",
-    "Feyenoord Rotterdam": "ظپط§غŒظ†ظˆط±ط¯",
-    "AZ": "ط¢ظ„ع©ظ…ط§ط±",
-    "FC Twente '65": "طھظˆط¦ظ†طھظ‡",
-    "FC Utrecht": "ط§ظˆطھط±ط®طھ",
-    "PEC Zwolle": "ط²ظˆظ„ظ‡",
-    "FC Groningen": "ط®ط±ظˆظ†غŒظ†ع¯ظ†",
+    "AFC Ajax": "ط·آ¢ط¹ع©ط·آ§ط¹آ©ط·آ³",
+    "PSV": "ط·آ¢ط؛إ’ط¸â€ ط·آ¯ط¸â€،ط¸ث†ط¸ث†ط¸â€ ",
+    "Feyenoord Rotterdam": "ط¸ظ¾ط·آ§ط؛إ’ط¸â€ ط¸ث†ط·آ±ط·آ¯",
+    "AZ": "ط·آ¢ط¸â€‍ط¹آ©ط¸â€¦ط·آ§ط·آ±",
+    "FC Twente '65": "ط·ع¾ط¸ث†ط·آ¦ط¸â€ ط·ع¾ط¸â€،",
+    "FC Utrecht": "ط·آ§ط¸ث†ط·ع¾ط·آ±ط·آ®ط·ع¾",
+    "PEC Zwolle": "ط·آ²ط¸ث†ط¸â€‍ط¸â€،",
+    "FC Groningen": "ط·آ®ط·آ±ط¸ث†ط¸â€ ط؛إ’ط¸â€ ط¹آ¯ط¸â€ ",
 
-    "SL Benfica": "ط¨ظ†ظپغŒع©ط§",
-    "FC Porto": "ظ¾ظˆط±طھظˆ",
-    "Sporting Clube de Portugal": "ط§ط³ظ¾ظˆط±طھغŒظ†ع¯",
-    "SC Braga": "ط¨ط±ط§ع¯ط§",
-    "Vitأ³ria SC": "ظˆغŒطھظˆط±غŒط§ ع¯غŒظ…ط§ط±ط´",
-    "Vitط£آ³ria SC": "ظˆغŒطھظˆط±غŒط§ ع¯غŒظ…ط§ط±ط´",
+    "SL Benfica": "ط·آ¨ط¸â€ ط¸ظ¾ط؛إ’ط¹آ©ط·آ§",
+    "FC Porto": "ط¸آ¾ط¸ث†ط·آ±ط·ع¾ط¸ث†",
+    "Sporting Clube de Portugal": "ط·آ§ط·آ³ط¸آ¾ط¸ث†ط·آ±ط·ع¾ط؛إ’ط¸â€ ط¹آ¯",
+    "SC Braga": "ط·آ¨ط·آ±ط·آ§ط¹آ¯ط·آ§",
+    "Vitط£آ³ria SC": "ط¸ث†ط؛إ’ط·ع¾ط¸ث†ط·آ±ط؛إ’ط·آ§ ط¹آ¯ط؛إ’ط¸â€¦ط·آ§ط·آ±ط·آ´",
+    "Vitط·آ£ط¢آ³ria SC": "ط¸ث†ط؛إ’ط·ع¾ط¸ث†ط·آ±ط؛إ’ط·آ§ ط¹آ¯ط؛إ’ط¸â€¦ط·آ§ط·آ±ط·آ´",
 
-    "CR Flamengo": "ظپظ„ط§ظ…غŒظ†ع¯ظˆ",
-    "SE Palmeiras": "ظ¾ط§ظ„ظ…غŒط±ط§ط³",
-    "Botafogo FR": "ط¨ظˆطھط§ظپظˆع¯ظˆ",
-    "Fluminense FC": "ظپظ„ظˆظ…غŒظ†ظ†ط²ظ‡",
-    "Corinthians": "ع©ظˆط±غŒظ†طھغŒط§ظ†ط³",
-    "Sأ£o Paulo FC": "ط³ط§ط¦ظˆظ¾ط§ط¦ظˆظ„ظˆ",
-    "Sط£آ£o Paulo FC": "ط³ط§ط¦ظˆظ¾ط§ط¦ظˆظ„ظˆ",
+    "CR Flamengo": "ط¸ظ¾ط¸â€‍ط·آ§ط¸â€¦ط؛إ’ط¸â€ ط¹آ¯ط¸ث†",
+    "SE Palmeiras": "ط¸آ¾ط·آ§ط¸â€‍ط¸â€ ط؛إ’ط·آ±ط·آ§ط·آ³",
+    "Botafogo FR": "ط·آ¨ط¸ث†ط·ع¾ط·آ§ط¸ظ¾ط¸â€،ط¸ث†ط¹آ¯ط¸ث†",
+    "Fluminense FC": "ط¸ظ¾ط¸â€‍ط¸ث†ط¸â€¦ط؛إ’ط¸â€ ط¸â€ ط·آ²ط¸â€،",
+    "Corinthians": "ط¹آ©ط¸ث†ط·آ±ط؛إ’ط¸â€ ط·ع¾ط؛إ’ط·آ§ط¸â€ ط·آ³",
+    "Sط£آ£o Paulo FC": "ط·آ³ط·آ§ط·آ¦ط¸ث†ط¸آ¾ط·آ§ط·آ¦ط¸ث†ط¸â€‍ط¸ث†",
+    "Sط·آ£ط¢آ£o Paulo FC": "ط·آ³ط·آ§ط·آ¦ط¸ث†ط¸آ¾ط·آ§ط·آ¦ط¸ث†ط¸â€‍ط¸ث†",
 }
 
 
@@ -261,13 +261,13 @@ def repair_text(text):
     text = str(text)
 
     # Fast path: already normal Persian / Unicode.
-    if not any(ch in text for ch in ("ظ", "ط", "غ", "Œ", "أ", "©")):
+    if not any(ch in text for ch in ("ط¸", "ط·", "ط؛", "إ’", "ط£", "آ©")):
         return text
 
     try:
         repaired = text.encode("cp1256").decode("utf-8")
 
-        if repaired != text and "�" not in repaired:
+        if repaired != text and "ï؟½" not in repaired:
             return repaired
 
     except Exception:
@@ -1054,7 +1054,7 @@ def draw_match_card(
         draw,
         home_x,
         y + 350,
-        "ظ…غŒط²ط¨ط§ظ†",
+        "ط¸â€¦ط؛إ’ط·آ²ط·آ¨ط·آ§ط¸â€ ",
         small_font,
         (113, 122, 149),
     )
@@ -1063,7 +1063,7 @@ def draw_match_card(
         draw,
         away_x,
         y + 350,
-        "ظ…ظ‡ظ…ط§ظ†",
+        "ط¸â€¦ط¸â€،ط¸â€¦ط·آ§ط¸â€ ",
         small_font,
         (113, 122, 149),
     )
@@ -1145,7 +1145,7 @@ def create_poster(matches):
     )
 
     # Main Persian title.
-    title = "ط¨ط§ط²غŒâ€Œظ‡ط§غŒ ط§ظ…ط±ظˆط²"
+    title = "ط·آ¨ط·آ§ط·آ²ط؛إ’أ¢â‚¬إ’ط¸â€،ط·آ§ط؛إ’ ط·آ§ط¸â€¦ط·آ±ط¸ث†ط·آ²"
 
     title_font = get_font(
         72,
@@ -1163,8 +1163,8 @@ def create_poster(matches):
 
     # Subtitle.
     subtitle = (
-        "ط¨ط±ظ†ط§ظ…ظ‡ ظ…ط³ط§ط¨ظ‚ط§طھ "
-        "ظپظˆطھط¨ط§ظ„ ط§ظ…ط±ظˆ²"
+        "ط·آ¨ط·آ±ط¸â€ ط·آ§ط¸â€¦ط¸â€، ط¸â€¦ط·آ³ط·آ§ط·آ¨ط¸â€ڑط·آ§ط·ع¾ "
+        "ط¸ظ¾ط¸ث†ط·ع¾ط·آ¨ط·آ§ط¸â€‍ ط·آ§ط¸â€¦ط·آ±ط¸ث†آ²"
     )
 
     draw_rtl(
@@ -1181,7 +1181,7 @@ def create_poster(matches):
     # ========================================================
 
     date_text = (
-        "طھط§ط±غŒط® "
+        "ط·ع¾ط·آ§ط·آ±ط؛إ’ط·آ® "
         + format_date(get_today())
     )
 
@@ -1248,7 +1248,7 @@ def create_poster(matches):
 
     count_text = (
         english_digits(len(matches))
-        + " ظ…ط³ط§ط¨ظ‚ظ‡ ط§ظ…ط±ظˆط²"
+        + " ط¸â€¦ط·آ³ط·آ§ط·آ¨ط¸â€ڑط¸â€، ط·آ§ط¸â€¦ط·آ±ط¸ث†ط·آ²"
     )
 
     draw_rtl(
@@ -1345,7 +1345,7 @@ def create_poster(matches):
             WIDTH - MARGIN,
             footer_y + 29,
         ),
-        "طھظ…ط§ظ…غŒ ط³ط§ط¹طھâ€Œظ‡ط§ ط¨ظ‡ ظˆظ‚طھ طھظ‡ط±ط§ظ†",
+        "ط·ع¾ط¸â€¦ط·آ§ط¸â€¦ط؛إ’ ط·آ³ط·آ§ط·آ¹ط·ع¾أ¢â‚¬إ’ط¸â€،ط·آ§ ط·آ¨ط¸â€، ط¸ث†ط¸â€ڑط·ع¾ ط·ع¾ط¸â€،ط·آ±ط·آ§ط¸â€ ",
         get_font(20),
         (112, 121, 148),
         "ra",
@@ -1392,25 +1392,27 @@ def create_poster(matches):
 # TELEGRAM
 # ============================================================
 
-def send_document(document, caption):
+def send_photo(photo, caption):
     """
-    Send as Telegram Document instead of Photo.
+    Send the generated PNG as a Telegram Photo instead of a
+    Document so Telegram displays it as a normal image.
 
-    This is important because Telegram's sendPhoto pipeline
-    can recompress / resize images.
-
-    sendDocument keeps the original PNG file.
+    The original PNG is kept as PNG and is not converted to JPEG
+    or resized by this code before uploading.
     """
 
     url = (
         f"https://api.telegram.org/"
-        f"bot{BOT_TOKEN}/sendDocument"
+        f"bot{BOT_TOKEN}/sendPhoto"
     )
 
+    # Keep the original high-resolution PNG in memory.
+    photo.seek(0)
+
     files = {
-        "document": (
+        "photo": (
             "football_daily.png",
-            document,
+            photo,
             "image/png",
         )
     }
@@ -1430,7 +1432,7 @@ def send_document(document, caption):
     response.raise_for_status()
 
     print(
-        "Telegram PNG document sent successfully."
+        "Telegram PNG photo sent successfully."
     )
 
 
@@ -1596,12 +1598,12 @@ def main():
 
     if not all_matches:
         message = (
-            "⚽ بازی‌های امروز\n\n"
-            "📅 تاریخ: "
+            "âڑ½ ط¨ط§ط²غŒâ€Œظ‡ط§غŒ ط§ظ…ط±ظˆط²\n\n"
+            "ًں“… طھط§ط±غŒط®: "
             + format_date(today)
             + "\n\n"
-            "در لیگ‌های منتخب امروز مسابقه‌ای "
-            "پیدا نشد."
+            "ط¯ط± ظ„غŒع¯â€Œظ‡ط§غŒ ظ…ظ†طھط®ط¨ ط§ظ…ط±ظˆط² ظ…ط³ط§ط¨ظ‚ظ‡â€Œط§غŒ "
+            "ظ¾غŒط¯ط§ ظ†ط´ط¯."
         )
 
         send_message(message)
@@ -1625,23 +1627,23 @@ def main():
     # --------------------------------------------------------
 
     caption = (
-        "⚽ بازی‌های امروز\n"
-        "📅 "
+        "âڑ½ ط¨ط§ط²غŒâ€Œظ‡ط§غŒ ط§ظ…ط±ظˆط²\n"
+        "ًں“… "
         + format_date(today)
         + "\n"
-        "🎯 "
+        "ًںژ¯ "
         + english_digits(
             len(all_matches)
         )
-        + " مسابقه\n"
-        "🕐 تمامی ساعت‌ها به وقت تهران"
+        + " ظ…ط³ط§ط¨ظ‚ظ‡\n"
+        "ًں•گ طھظ…ط§ظ…غŒ ط³ط§ط¹طھâ€Œظ‡ط§ ط¨ظ‡ ظˆظ‚طھ طھظ‡ط±ط§ظ†"
     )
 
     # --------------------------------------------------------
-    # Send original PNG as document
+    # Send PNG as normal Telegram photo
     # --------------------------------------------------------
 
-    send_document(
+    send_photo(
         poster,
         caption,
     )
