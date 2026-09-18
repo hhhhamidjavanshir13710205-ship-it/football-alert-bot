@@ -1,1321 +1,220 @@
 # -*- coding: utf-8 -*-
-"""
-Football Alert Bot
-نسخه طراحی جدید — پوستر مدرن و مینیمال با پشتیبانی واقعی RTL/RAQM
-"""
-
-import os
-import io
-import time
-import math
-import requests
+import os, io, time, math, requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+CHAT_ID = os.getenv('CHAT_ID')
+FOOTBALL_API_TOKEN = os.getenv('FOOTBALL_API_TOKEN')
+API_URL = 'https://api.football-data.org/v4/competitions/{}/matches'
+TEHRAN = ZoneInfo('Asia/Tehran')
+WIDTH, MARGIN, GAP = 1600, 70, 28
 
-# ============================================================
-# تنظیمات
-# ============================================================
+COMPETITIONS = {
+    'PL':'لیگ برتر انگلیس','PD':'لالیگا','SA':'سری آ ایتالیا','BL1':'بوندسلیگا',
+    'FL1':'لیگ ۱ فرانسه','DED':'اردیویسه','PPL':'لیگ پرتغال','BSA':'سری آ برزیل','CL':'لیگ قهرمانان اروپا'
+}
+LEAGUE_COLORS = {
+    'PL':(132,82,246),'PD':(236,70,91),'SA':(42,132,238),'BL1':(232,66,72),
+    'FL1':(50,120,236),'DED':(242,145,42),'PPL':(38,170,118),'BSA':(38,158,103),'CL':(92,103,238)
+}
+LEAGUE_ICONS = {'PL':'PL','PD':'LaLiga','SA':'Serie A','BL1':'BL','FL1':'L1','DED':'NL','PPL':'PT','BSA':'BR','CL':'UCL'}
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-FOOTBALL_API_TOKEN = os.getenv("FOOTBALL_API_TOKEN")
+TEAM_NAMES = {
+'Brentford FC':'برنتفورد','Chelsea FC':'چلسی','Arsenal FC':'آرسنال','Liverpool FC':'لیورپول','Manchester City FC':'منچسترسیتی','Manchester United FC':'منچستریونایتد','Tottenham Hotspur FC':'تاتنهام','Newcastle United FC':'نیوکاسل','Aston Villa FC':'استون ویلا','Everton FC':'اورتون','West Ham United FC':'وستهم','Fulham FC':'فولام','Crystal Palace FC':'کریستال پالاس','Brighton & Hove Albion FC':'برایتون','Wolverhampton Wanderers FC':'ولورهمپتون','Nottingham Forest FC':'ناتینگهام فارست','AFC Bournemouth':'بورنموث','Burnley FC':'برنلی','Leeds United FC':'لیدز','Sunderland AFC':'ساندرلند',
+'Real Madrid CF':'رئال مادرید','FC Barcelona':'بارسلونا','RCD Espanyol de Barcelona':'اسپانیول','Elche CF':'الچه','Club Atlético de Madrid':'اتلتیکو مادرید','Club Atlأ©tico de Madrid':'اتلتیکو مادرید','Sevilla FC':'سویا','Valencia CF':'والنسیا','Villarreal CF':'ویارئال','Athletic Club':'اتلتیک بیلبائو','Real Betis Balompié':'رئال بتیس','Real Betis Balompiأ©':'رئال بتیس','Getafe CF':'ختافه','Girona FC':'ژیرونا','RC Celta de Vigo':'سلتاویگو','CA Osasuna':'اوساسونا','Rayo Vallecano de Madrid':'رایو وایکانو','RCD Mallorca':'مایورکا','Deportivo Alavés':'آلاوس','Deportivo Alavأ©s':'آلاوس','Real Sociedad de Fútbol':'رئال سوسیداد','Real Sociedad de Fأ؛tbol':'رئال سوسیداد',
+'FC Internazionale Milano':'اینتر','Inter Milan':'اینتر','AC Milan':'آث میلان','Juventus FC':'یوونتوس','SSC Napoli':'ناپولی','AS Roma':'رم','SS Lazio':'لاتزیو','Atalanta BC':'آتالانتا','ACF Fiorentina':'فیورنتینا','Torino FC':'تورینو','Bologna FC 1909':'بولونیا','Genoa CFC':'جنوا','Udinese Calcio':'اودینزه','Parma Calcio 1913':'پارما','US Lecce':'لچه','Cagliari Calcio':'کالیاری','Como 1907':'کومو','US Sassuolo Calcio':'ساسولو','Sassuolo Calcio':'ساسولو',
+'FC Bayern München':'بایرن مونیخ','FC Bayern Mأ¼nchen':'بایرن مونیخ','Borussia Dortmund':'دورتموند','RB Leipzig':'لایپزیگ','Bayer 04 Leverkusen':'بایرلورکوزن','Eintracht Frankfurt':'آینتراخت فرانکفورت','VfB Stuttgart':'اشتوتگارت','VfL Wolfsburg':'ولفسبورگ','Borussia Mönchengladbach':'مونشن گلادباخ','Borussia Mأ¶nchengladbach':'مونشن گلادباخ','SV Werder Bremen':'وردربرمن','1. FSV Mainz 05':'ماینتس','TSG 1899 Hoffenheim':'هوفنهایم','Sport-Club Freiburg':'فرایبورگ','FC Augsburg':'آگسبورگ','1. FC Union Berlin':'یونیون برلین','1. FC Köln':'کلن','1. FC Kأ¶ln':'کلن','Hamburger SV':'هامبورگ',
+'Paris Saint-Germain FC':'پاری سن ژرمن','Olympique de Marseille':'مارسی','AS Monaco FC':'موناکو','Olympique Lyonnais':'لیون','Lille OSC':'لیل','OGC Nice':'نیس','Stade Rennais FC 1901':'رن','FC Nantes':'نانت','Toulouse FC':'تولوز','RC Lens':'لانس','Racing Club de Lens':'لانس','RC Strasbourg Alsace':'استراسبورگ',
+'AFC Ajax':'آژاکس','PSV':'آیندهوون','Feyenoord Rotterdam':'فاینورد','AZ':'آلکمار',"FC Twente '65":'توئنته','FC Utrecht':'اوترخت','PEC Zwolle':'زوله','FC Groningen':'خرونینگن',
+'SL Benfica':'بنفیکا','FC Porto':'پورتو','Sporting Clube de Portugal':'اسپورتینگ','SC Braga':'براگا','Vitória SC':'ویتوریا گیمارش','Vitأ³ria SC':'ویتوریا گیمارش',
+'CR Flamengo':'فلامینگو','SE Palmeiras':'پالمیراس','Botafogo FR':'بوتافوگو','Fluminense FC':'فلومیننزه','Corinthians':'کورینتیانس','São Paulo FC':'سائوپائولو','Sأ£o Paulo FC':'سائوپائولو'
+}
 
-API_URL = "https://api.football-data.org/v4/competitions/{}/matches"
-TEHRAN = ZoneInfo("Asia/Tehran")
-
-WIDTH = 1600
-MARGIN = 64
-GAP = 26
-CARD_HEIGHT = 340
-HEADER_HEIGHT = 330
-FOOTER_HEIGHT = 92
-
-COMPETITIONS = {'PL': 'لیگ برتر انگلیس', 'PD': 'لالیگا', 'SA': 'سری آ ایتالیا', 'BL1': 'بوندسلیگا', 'FL1': 'لیگ ۱ فرانسه', 'DED': 'اردیویسه', 'PPL': 'لیگ پرتغال', 'BSA': 'سری آ برزیل', 'CL': 'لیگ قهرمانان اروپا'}
-LEAGUE_COLORS = {'PL': (128, 86, 245), 'PD': (235, 75, 92), 'SA': (48, 135, 235), 'BL1': (235, 72, 72), 'FL1': (50, 125, 235), 'DED': (240, 145, 40), 'PPL': (35, 170, 115), 'BSA': (40, 160, 100), 'CL': (92, 100, 235)}
-TEAM_NAMES = {'Brentford FC': 'برنتفورد', 'Chelsea FC': 'چلسی', 'Arsenal FC': 'آرسنال', 'Liverpool FC': 'لیورپول', 'Manchester City FC': 'منچسترسیتی', 'Manchester United FC': 'منچستریونایتد', 'Tottenham Hotspur FC': 'تاتنهام', 'Newcastle United FC': 'نیوکاسل', 'Aston Villa FC': 'استون ویلا', 'Everton FC': 'اورتون', 'West Ham United FC': 'وستهم', 'Fulham FC': 'فولام', 'Crystal Palace FC': 'کریستال پالاس', 'Brighton & Hove Albion FC': 'برایتون', 'Wolverhampton Wanderers FC': 'ولورهمپتون', 'Nottingham Forest FC': 'ناتینگهام فارست', 'AFC Bournemouth': 'بورنموث', 'Burnley FC': 'برنلی', 'Leeds United FC': 'لیدز', 'Sunderland AFC': 'ساندرلند', 'Real Madrid CF': 'رئال مادرید', 'FC Barcelona': 'بارسلونا', 'RCD Espanyol de Barcelona': 'اسپانیول', 'Elche CF': 'الچه', 'Club Atlético de Madrid': 'اتلتیکو مادرید', 'Club Atlأ©tico de Madrid': 'اتلتیکو مادرید', 'Sevilla FC': 'سویا', 'Valencia CF': 'والنسیا', 'Villarreal CF': 'ویارئال', 'Athletic Club': 'اتلتیک بیلبائو', 'Real Betis Balompié': 'رئال بتیس', 'Real Betis Balompiأ©': 'رئال بتیس', 'Getafe CF': 'ختافه', 'Girona FC': 'ژیرونا', 'RC Celta de Vigo': 'سلتاویگو', 'CA Osasuna': 'اوساسونا', 'Rayo Vallecano de Madrid': 'رایو وایکانو', 'RCD Mallorca': 'مایورکا', 'Deportivo Alavés': 'آلاوس', 'Deportivo Alavأ©s': 'آلاوس', 'Real Sociedad de Fútbol': 'رئال سوسیداد', 'Real Sociedad de Fأ؛tbol': 'رئال سوسیداد', 'FC Internazionale Milano': 'اینتر', 'Inter Milan': 'اینتر', 'AC Milan': 'آث میلان', 'Juventus FC': 'یوونتوس', 'SSC Napoli': 'ناپولی', 'AS Roma': 'رم', 'SS Lazio': 'لاتزیو', 'Atalanta BC': 'آتالانتا', 'ACF Fiorentina': 'فیورنتینا', 'Torino FC': 'تورینو', 'Bologna FC 1909': 'بولونیا', 'Genoa CFC': 'جنوا', 'Udinese Calcio': 'اودینزه', 'Parma Calcio 1913': 'پارما', 'US Lecce': 'لچه', 'Cagliari Calcio': 'کالیاری', 'Como 1907': 'کومو', 'US Sassuolo Calcio': 'ساسولو', 'Sassuolo Calcio': 'ساسولو', 'AC Monza': 'مونزا', 'FC Bayern München': 'بایرن مونیخ', 'FC Bayern Mأ¼nchen': 'بایرن مونیخ', 'Borussia Dortmund': 'دورتموند', 'RB Leipzig': 'لایپزیگ', 'Bayer 04 Leverkusen': 'بایرلورکوزن', 'Eintracht Frankfurt': 'آینتراخت فرانکفورت', 'VfB Stuttgart': 'اشتوتگارت', 'VfL Wolfsburg': 'ولفسبورگ', 'Borussia Mönchengladbach': 'مونشن گلادباخ', 'Borussia Mأ¶nchengladbach': 'مونشن گلادباخ', 'SV Werder Bremen': 'وردربرمن', '1. FSV Mainz 05': 'ماینتس', 'TSG 1899 Hoffenheim': 'هوفنهایم', 'Sport-Club Freiburg': 'فرایبورگ', 'FC Augsburg': 'آگسبورگ', '1. FC Union Berlin': 'یونیون برلین', '1. FC Köln': 'کلن', '1. FC Kأ¶ln': 'کلن', 'Hamburger SV': 'هامبورگ', 'Paris Saint-Germain FC': 'پاری سن ژرمن', 'Olympique de Marseille': 'مارسی', 'AS Monaco FC': 'موناکو', 'Olympique Lyonnais': 'لیون', 'Lille OSC': 'لیل', 'OGC Nice': 'نیس', 'Stade Rennais FC 1901': 'رن', 'FC Nantes': 'نانت', 'Toulouse FC': 'تولوز', 'RC Lens': 'لانس', 'Racing Club de Lens': 'لانس', 'RC Strasbourg Alsace': 'استراسبورگ', 'AFC Ajax': 'آژاکس', 'PSV': 'آیندهوون', 'Feyenoord Rotterdam': 'فاینورد', 'AZ': 'آلکمار', "FC Twente '65": 'توئنته', 'FC Utrecht': 'اوترخت', 'PEC Zwolle': 'زوله', 'FC Groningen': 'خرونینگن', 'SL Benfica': 'بنفیکا', 'FC Porto': 'پورتو', 'Sporting Clube de Portugal': 'اسپورتینگ', 'SC Braga': 'براگا', 'Vitória SC': 'ویتوریا گیمارش', 'Vitأ³ria SC': 'ویتوریا گیمارش', 'CR Flamengo': 'فلامینگو', 'SE Palmeiras': 'پالمیراس', 'Botafogo FR': 'بوتافوگو', 'Fluminense FC': 'فلومیننزه', 'Corinthians': 'کورینتیانس', 'São Paulo FC': 'سائوپائولو', 'Sأ£o Paulo FC': 'سائوپائولو'}
-
-
-# ============================================================
-# فونت و RTL
-# ============================================================
-
-def find_font(paths):
-    for path in paths:
-        if os.path.exists(path):
-            return path
-    return None
-
-
-def get_font(size, bold=False, latin=False):
-    custom = os.getenv("FONT_PATH")
-
-    if custom and os.path.exists(custom) and not latin:
-        path = custom
-    elif latin:
-        path = find_font([
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        ])
-    elif bold:
-        path = find_font([
-            "/usr/share/fonts/truetype/noto/NotoSansArabic-Bold.ttf",
-            "/usr/share/fonts/opentype/noto/NotoSansArabic-Bold.ttf",
-            "/usr/share/fonts/truetype/vazirmatn/Vazirmatn-Bold.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        ])
-    else:
-        path = find_font([
-            "/usr/share/fonts/truetype/noto/NotoSansArabic-Regular.ttf",
-            "/usr/share/fonts/opentype/noto/NotoSansArabic-Regular.ttf",
-            "/usr/share/fonts/truetype/vazirmatn/Vazirmatn-Regular.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        ])
-
-    if path:
-        try:
-            return ImageFont.truetype(
-                path,
-                size,
-                layout_engine=ImageFont.Layout.RAQM
-            )
-        except Exception:
-            return ImageFont.truetype(path, size)
-
+FONT_PATHS = {
+    'bold': ['/usr/share/fonts/truetype/noto/NotoKufiArabic-Bold.ttf','/usr/share/fonts/opentype/noto/NotoKufiArabic-Bold.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'],
+    'regular': ['/usr/share/fonts/truetype/noto/NotoKufiArabic-Regular.ttf','/usr/share/fonts/opentype/noto/NotoKufiArabic-Regular.ttf','/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'],
+    'english': ['/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf']
+}
+def get_font(size,bold=False,english=False):
+    custom=os.getenv('FONT_PATH')
+    if custom and os.path.exists(custom): return ImageFont.truetype(custom,size)
+    for p in FONT_PATHS['english' if english else ('bold' if bold else 'regular')]:
+        if os.path.exists(p): return ImageFont.truetype(p,size)
     return ImageFont.load_default()
 
+def rtl_args(font,fill,anchor='ra',align='right'):
+    return {'font':font,'fill':fill,'anchor':anchor,'align':align,'direction':'rtl','language':'fa'}
 
 def repair_text(text):
-    if text is None:
-        return ""
-
-    text = str(text)
-
+    if text is None:return ''
+    text=str(text)
     try:
-        repaired = text.encode("cp1256").decode("utf-8")
-        if repaired != text:
-            return repaired
-    except Exception:
-        pass
-
+        r=text.encode('cp1256').decode('utf-8')
+        if r != text and ('�' not in r): return r
+    except Exception: pass
     return text
 
-
 def persian_digits(text):
-    return str(text).translate(
-        str.maketrans(
-            "0123456789",
-            "۰۱۲۳۴۵۶۷۸۹"
-        )
-    )
+    return str(text).translate(str.maketrans('0123456789','۰۱۲۳۴۵۶۷۸۹'))
 
+def draw_rtl(draw,xy,text,font,fill,anchor='ra'):
+    draw.text(xy,repair_text(text),**rtl_args(font,fill,anchor))
 
-def rtl_kwargs(font, fill, anchor="mm", align="center"):
-    return {
-        "font": font,
-        "fill": fill,
-        "anchor": anchor,
-        "align": align,
-        "direction": "rtl",
-        "language": "fa",
-    }
+def bbox(draw,text,font,rtl=True):
+    if rtl:
+        return draw.textbbox((0,0),repair_text(text),font=font,direction='rtl',language='fa')
+    return draw.textbbox((0,0),str(text),font=font)
 
+def centered(draw,cx,y,text,font,fill,rtl=True):
+    b=bbox(draw,text,font,rtl); w=b[2]-b[0]
+    if rtl:
+        draw.text((cx+w/2,y),repair_text(text),**rtl_args(font,fill,'ra','center'))
+    else:
+        draw.text((cx-w/2,y),str(text),font=font,fill=fill,anchor='la')
 
-def draw_rtl(draw, xy, text, font, fill, anchor="ra", align="right"):
+def fit_font(draw,text,max_width,max_size,min_size=18,bold=True):
+    for s in range(max_size,min_size-1,-2):
+        f=get_font(s,bold=bold)
+        if bbox(draw,text,f)[2]-bbox(draw,text,f)[0] <= max_width:return f
+    return get_font(min_size,bold=bold)
+
+def get_today(): return datetime.now(TEHRAN).strftime('%Y-%m-%d')
+def format_date(s):
     try:
-        draw.text(
-            xy,
-            repair_text(text),
-            **rtl_kwargs(font, fill, anchor, align)
-        )
-    except Exception:
-        draw.text(
-            xy,
-            repair_text(text),
-            font=font,
-            fill=fill,
-            anchor=anchor,
-            align=align,
-        )
+        d=datetime.strptime(s,'%Y-%m-%d'); return persian_digits(f'{d.year}/{d.month:02d}/{d.day:02d}')
+    except Exception:return persian_digits(s)
+def match_time(s):
+    try:return datetime.fromisoformat(s.replace('Z','+00:00')).astimezone(TEHRAN).strftime('%H:%M')
+    except Exception:return '--:--'
 
-
-def draw_center(draw, cx, cy, text, font, fill):
-    draw_rtl(
-        draw,
-        (cx, cy),
-        text,
-        font,
-        fill,
-        anchor="mm",
-        align="center",
-    )
-
-
-def text_width(draw, text, font):
-    text = repair_text(text)
-
+LOGO_CACHE={}
+def download_logo(url):
+    if not url:return None
+    if url in LOGO_CACHE:return LOGO_CACHE[url]
     try:
-        box = draw.textbbox(
-            (0, 0),
-            text,
-            font=font,
-            direction="rtl",
-            language="fa",
-        )
-    except Exception:
-        box = draw.textbbox(
-            (0, 0),
-            text,
-            font=font,
-        )
+        r=requests.get(url,timeout=15); r.raise_for_status()
+        im=Image.open(io.BytesIO(r.content)).convert('RGBA'); im.thumbnail((250,250),Image.Resampling.LANCZOS)
+        LOGO_CACHE[url]=im; return im
+    except Exception as e:
+        print('Logo download failed:',e); LOGO_CACHE[url]=None; return None
 
-    return box[2] - box[0]
-
-
-def fit_font(draw, text, max_width, max_size, min_size=18):
-    for size in range(max_size, min_size - 1, -2):
-        font = get_font(size, bold=True)
-
-        if text_width(draw, text, font) <= max_width:
-            return font
-
-    return get_font(min_size, bold=True)
-
-
-# ============================================================
-# تاریخ و ساعت
-# ============================================================
-
-def get_today():
-    return datetime.now(TEHRAN).strftime("%Y-%m-%d")
-
-
-def format_date(date_string):
-    try:
-        dt = datetime.strptime(date_string, "%Y-%m-%d")
-        return f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
-    except Exception:
-        return date_string
-
-
-def match_time(utc_string):
-    try:
-        dt = datetime.fromisoformat(
-            utc_string.replace("Z", "+00:00")
-        )
-        return dt.astimezone(TEHRAN).strftime("%H:%M")
-    except Exception:
-        return "--:--"
-
-
-# ============================================================
-# نام تیم
-# ============================================================
-
-def team_display_name(original):
-    original = repair_text(original).strip()
-
-    if original in TEAM_NAMES:
-        return TEAM_NAMES[original]
-
-    normalized = original.replace("  ", " ")
-
-    if normalized in TEAM_NAMES:
-        return TEAM_NAMES[normalized]
-
-    # نام ناشناخته را دست‌نخورده نگه می‌داریم.
-    # اگر انگلیسی باشد با فونت مناسب در کارت نمایش داده می‌شود.
-    return normalized
-
-
-# ============================================================
-# دریافت مسابقات
-# ============================================================
-
-def get_matches(code, date_string):
-    headers = {
-        "X-Auth-Token": FOOTBALL_API_TOKEN
-    }
-
-    params = {
-        "dateFrom": date_string,
-        "dateTo": date_string
-    }
-
+def get_matches(code,date_string):
+    headers={'X-Auth-Token':FOOTBALL_API_TOKEN}; params={'dateFrom':date_string,'dateTo':date_string}
     for attempt in range(3):
         try:
-            response = requests.get(
-                API_URL.format(code),
-                headers=headers,
-                params=params,
-                timeout=30
-            )
-
-            if response.status_code == 429:
-                print(
-                    "Rate limit reached. Waiting 45 seconds..."
-                )
-                time.sleep(45)
-                continue
-
-            response.raise_for_status()
-
-            return response.json().get(
-                "matches",
-                []
-            )
-
-        except Exception as exc:
-            print(
-                f"Error {code}: {exc}"
-            )
-
-            if attempt < 2:
-                time.sleep(5)
-
+            r=requests.get(API_URL.format(code),headers=headers,params=params,timeout=30)
+            if r.status_code==429: time.sleep(45); continue
+            r.raise_for_status(); return r.json().get('matches',[])
+        except Exception as e:
+            print(f'Error {code}: {e}')
+            if attempt<2: time.sleep(5)
     return []
 
+def background(w,h):
+    im=Image.new('RGBA',(w,h)); px=im.load()
+    for y in range(h):
+        t=y/max(1,h-1)
+        base=(7+int(5*t),10+int(5*t),24+int(12*t))
+        for x in range(w):
+            dx=(x-w*.5)/w; dy=(y-h*.18)/h; glow=max(0,1-math.sqrt(dx*dx+dy*dy)*3)
+            px[x,y]=(min(255,int(base[0]+glow*8)),min(255,int(base[1]+glow*8)),min(255,int(base[2]+glow*18)),255)
+    ov=Image.new('RGBA',(w,h)); d=ImageDraw.Draw(ov)
+    d.ellipse((-350,-250,500,650),fill=(91,70,245,24)); d.ellipse((w-550,0,w+300,800),fill=(35,110,240,20))
+    for x in range(-h,w+h,260): d.line((x,h,x+h,0),fill=(255,255,255,5),width=2)
+    ov=ov.filter(ImageFilter.GaussianBlur(16)); im.alpha_composite(ov); return im
 
-# ============================================================
-# لوگو
-# ============================================================
+def shadow(im,box,r=30):
+    sh=Image.new('RGBA',im.size); d=ImageDraw.Draw(sh); x1,y1,x2,y2=box
+    d.rounded_rectangle((x1,y1+12,x2,y2+12),radius=r,fill=(0,0,0,125)); sh=sh.filter(ImageFilter.GaussianBlur(24)); im.alpha_composite(sh)
 
-LOGO_CACHE = {}
-
-
-def download_logo(url):
-    if not url:
-        return None
-
-    if url in LOGO_CACHE:
-        return LOGO_CACHE[url]
-
-    try:
-        response = requests.get(
-            url,
-            timeout=15
-        )
-
-        response.raise_for_status()
-
-        image = Image.open(
-            io.BytesIO(response.content)
-        ).convert("RGBA")
-
-        image.thumbnail(
-            (190, 190),
-            Image.Resampling.LANCZOS
-        )
-
-        LOGO_CACHE[url] = image
-
-        return image
-
-    except Exception as exc:
-        print(
-            f"Logo download failed: {exc}"
-        )
-
-        LOGO_CACHE[url] = None
-        return None
-
-
-# ============================================================
-# پس‌زمینه جدید
-# ============================================================
-
-def create_background(width, height):
-    image = Image.new(
-        "RGB",
-        (width, height),
-        (8, 12, 29)
-    )
-
-    pixels = image.load()
-
-    for y in range(height):
-        ratio = y / max(height - 1, 1)
-
-        r = int(8 + 5 * ratio)
-        g = int(12 + 8 * ratio)
-        b = int(29 + 17 * ratio)
-
-        for x in range(width):
-            dx = (x - width * 0.78) / width
-            dy = (y - height * 0.10) / height
-
-            distance = math.sqrt(
-                dx * dx + dy * dy
-            )
-
-            glow = max(
-                0.0,
-                1.0 - distance * 3.0
-            )
-
-            pixels[x, y] = (
-                min(255, int(r + glow * 7)),
-                min(255, int(g + glow * 7)),
-                min(255, int(b + glow * 18)),
-            )
-
-    return image.convert("RGBA")
-
-
-def add_background_effects(image):
-    overlay = Image.new(
-        "RGBA",
-        image.size,
-        (0, 0, 0, 0)
-    )
-
-    draw = ImageDraw.Draw(overlay)
-    width, height = image.size
-
-    draw.ellipse(
-        (-320, -280, 480, 520),
-        fill=(118, 80, 255, 24)
-    )
-
-    draw.ellipse(
-        (
-            width - 520,
-            -180,
-            width + 280,
-            620
-        ),
-        fill=(35, 130, 255, 20)
-    )
-
-    draw.ellipse(
-        (
-            width * 0.25,
-            height * 0.62,
-            width * 0.72,
-            height * 1.12
-        ),
-        fill=(60, 70, 190, 10)
-    )
-
-    overlay = overlay.filter(
-        ImageFilter.GaussianBlur(70)
-    )
-
-    image.alpha_composite(overlay)
-
-
-# ============================================================
-# ابزارهای گرافیکی
-# ============================================================
-
-def rounded(draw, box, radius, fill, outline=None, width=1):
-    draw.rounded_rectangle(
-        box,
-        radius=radius,
-        fill=fill,
-        outline=outline,
-        width=width
-    )
-
-
-def add_shadow(
-    image,
-    box,
-    radius=22,
-    blur=18,
-    offset_y=8
-):
-    shadow = Image.new(
-        "RGBA",
-        image.size,
-        (0, 0, 0, 0)
-    )
-
-    draw = ImageDraw.Draw(shadow)
-
-    x1, y1, x2, y2 = box
-
-    draw.rounded_rectangle(
-        (
-            x1,
-            y1 + offset_y,
-            x2,
-            y2 + offset_y
-        ),
-        radius=radius,
-        fill=(0, 0, 0, 105)
-    )
-
-    shadow = shadow.filter(
-        ImageFilter.GaussianBlur(blur)
-    )
-
-    image.alpha_composite(shadow)
-
-
-def draw_logo(
-    image,
-    logo,
-    cx,
-    cy,
-    size=116
-):
-    plate = Image.new(
-        "RGBA",
-        (size, size),
-        (0, 0, 0, 0)
-    )
-
-    draw = ImageDraw.Draw(plate)
-
-    draw.ellipse(
-        (2, 4, size - 2, size - 2),
-        fill=(0, 0, 0, 70)
-    )
-
-    draw.ellipse(
-        (0, 0, size - 5, size - 7),
-        fill=(248, 249, 252, 255)
-    )
-
+def draw_logo(im,logo,cx,cy,size=150,accent=(120,100,240)):
+    s=size+42; plate=Image.new('RGBA',(s,s)); d=ImageDraw.Draw(plate)
+    d.ellipse((7,11,s-3,s+2),fill=(0,0,0,90)); d.ellipse((0,0,s-9,s-9),fill=(247,249,253,255),outline=accent,width=4)
+    d.ellipse((10,10,s-19,s-19),outline=(220,224,235,255),width=2)
     if logo:
-        logo = logo.copy()
-
-        logo.thumbnail(
-            (size - 30, size - 30),
-            Image.Resampling.LANCZOS
-        )
-
-        lx = (size - logo.width) // 2
-        ly = (size - logo.height) // 2 - 2
-
-        plate.alpha_composite(
-            logo,
-            (lx, ly)
-        )
-
+        lg=logo.copy(); lg.thumbnail((size-5,size-5),Image.Resampling.LANCZOS)
+        plate.alpha_composite(lg,((s-lg.width)//2,(s-lg.height)//2))
     else:
-        draw.ellipse(
-            (28, 28, size - 36, size - 36),
-            outline=(190, 196, 210, 255),
-            width=3
-        )
+        d.ellipse((38,38,s-47,s-47),outline=(185,190,205,255),width=4)
+    im.alpha_composite(plate,(int(cx-s/2),int(cy-s/2)))
 
-    image.alpha_composite(
-        plate,
-        (
-            int(cx - size / 2),
-            int(cy - size / 2)
-        )
-    )
+def league_badge(draw,x,y,code,accent):
+    r=27; draw.ellipse((x-r,y-r,x+r,y+r),fill=accent); f=get_font(14,bold=True,english=True)
+    label=LEAGUE_ICONS.get(code,code); b=draw.textbbox((0,0),label,font=f); draw.text((x-(b[2]-b[0])/2,y-(b[3]-b[1])/2-2),label,font=f,fill='white')
 
-
-# ============================================================
-# کارت مسابقه — طراحی کاملاً جدید
-# ============================================================
-
-def draw_match_card(
-    image,
-    match,
-    x,
-    y,
-    width,
-    height,
-    number
-):
-    draw = ImageDraw.Draw(image)
-
-    accent = LEAGUE_COLORS.get(
-        match["competition_code"],
-        (105, 90, 235)
-    )
-
-    # سایه
-    add_shadow(
-        image,
-        (
-            x,
-            y,
-            x + width,
-            y + height
-        ),
-        26,
-        20,
-        8
-    )
-
-    # بدنه
-    rounded(
-        draw,
-        (
-            x,
-            y,
-            x + width,
-            y + height
-        ),
-        26,
-        (17, 22, 41, 255),
-        (42, 49, 73, 255),
-        1
-    )
-
-    # نوار رنگی بالا
-    rounded(
-        draw,
-        (
-            x,
-            y,
-            x + width,
-            y + 8
-        ),
-        4,
-        accent
-    )
-
-    # شماره
-    badge = 46
-    bx = x + 22
-    by = y + 21
-
-    rounded(
-        draw,
-        (
-            bx,
-            by,
-            bx + badge,
-            by + badge
-        ),
-        15,
-        (255, 255, 255, 16),
-        (255, 255, 255, 25),
-        1
-    )
-
-    num_font = get_font(
-        21,
-        bold=True
-    )
-
-    draw_center(
-        draw,
-        bx + badge / 2,
-        by + badge / 2 + 1,
-        persian_digits(number),
-        num_font,
-        (232, 235, 244)
-    )
-
-    # نام لیگ به صورت کپسولی
-    league = repair_text(
-        match["league_name"]
-    )
-
-    league_font = fit_font(
-        draw,
-        league,
-        width - 170,
-        24,
-        17
-    )
-
-    league_width = text_width(
-        draw,
-        league,
-        league_font
-    )
-
-    pill_width = min(
-        width - 105,
-        league_width + 32
-    )
-
-    pill_x2 = x + width - 22
-    pill_x1 = pill_x2 - pill_width
-
-    rounded(
-        draw,
-        (
-            pill_x1,
-            y + 20,
-            pill_x2,
-            y + 64
-        ),
-        15,
-        tuple(accent) + (28,),
-        tuple(accent) + (90,),
-        1
-    )
-
-    draw_rtl(
-        draw,
-        (
-            pill_x2 - 14,
-            y + 42
-        ),
-        league,
-        league_font,
-        (232, 235, 244),
-        anchor="rm"
-    )
-
-    # خط ظریف
-    draw.line(
-        (
-            x + 22,
-            y + 82,
-            x + width - 22,
-            y + 82
-        ),
-        fill=(255, 255, 255, 25),
-        width=1
-    )
-
-    # جای لوگوها
-    home_x = x + width * 0.25
-    away_x = x + width * 0.75
-    center_x = x + width / 2
-    logo_y = y + 153
-
-    draw_logo(
-        image,
-        match["home_logo"],
-        home_x,
-        logo_y,
-        116
-    )
-
-    draw_logo(
-        image,
-        match["away_logo"],
-        away_x,
-        logo_y,
-        116
-    )
-
-    # VS با فونت لاتین تا هیچ مربع/گلیف خراب ایجاد نشود
-    vs_font = get_font(
-        18,
-        bold=True,
-        latin=True
-    )
-
-    draw.text(
-        (center_x, y + 129),
-        "VS",
-        font=vs_font,
-        fill=(111, 121, 148),
-        anchor="mm"
-    )
-
-    # کپسول ساعت
-    time_width = 146
-    time_height = 54
-
-    time_x = center_x - time_width / 2
-    time_y = y + 184
-
-    rounded(
-        draw,
-        (
-            time_x,
-            time_y,
-            time_x + time_width,
-            time_y + time_height
-        ),
-        17,
-        tuple(accent) + (255,)
-    )
-
-    time_font = get_font(
-        29,
-        bold=True
-    )
-
-    draw_center(
-        draw,
-        center_x,
-        time_y + time_height / 2 + 1,
-        persian_digits(match["time"]),
-        time_font,
-        (255, 255, 255)
-    )
-
-    # نام تیم‌ها
-    home = repair_text(
-        match["home"]
-    )
-
-    away = repair_text(
-        match["away"]
-    )
-
-    home_font = fit_font(
-        draw,
-        home,
-        width * 0.37,
-        28,
-        18
-    )
-
-    away_font = fit_font(
-        draw,
-        away,
-        width * 0.37,
-        28,
-        18
-    )
-
-    draw_center(
-        draw,
-        home_x,
-        y + 274,
-        home,
-        home_font,
-        (247, 248, 252)
-    )
-
-    draw_center(
-        draw,
-        away_x,
-        y + 274,
-        away,
-        away_font,
-        (247, 248, 252)
-    )
-
-    # میزبان / مهمان
-    small_font = get_font(
-        16,
-        bold=False
-    )
-
-    draw_center(
-        draw,
-        home_x,
-        y + 312,
-        "میزبان",
-        small_font,
-        (111, 120, 145)
-    )
-
-    draw_center(
-        draw,
-        away_x,
-        y + 312,
-        "مهمان",
-        small_font,
-        (111, 120, 145)
-    )
-
-
-# ============================================================
-# ساخت پوستر
-# ============================================================
+def draw_match_card(im,m,x,y,w,h,num):
+    d=ImageDraw.Draw(im); accent=LEAGUE_COLORS.get(m['competition_code'],(100,110,235)); shadow(im,(x,y,x+w,y+h))
+    d.rounded_rectangle((x,y,x+w,y+h),radius=30,fill=(17,22,41,255),outline=(255,255,255,10),width=1)
+    d.rounded_rectangle((x,y,x+w,y+8),radius=5,fill=accent)
+    # subtle inner glow
+    d.rounded_rectangle((x+3,y+3,x+w-3,y+h-3),radius=27,outline=(*accent,38),width=2)
+    league_badge(d,x+49,y+48,m['competition_code'],accent)
+    lf=fit_font(d,m['league_name'],w-170,29,18)
+    draw_rtl(d,(x+w-30,y+30),m['league_name'],lf,(242,244,249),'ra')
+    d.line((x+30,y+92,x+w-30,y+92),fill=(255,255,255,35),width=2)
+    # match number pill
+    nf=get_font(18,bold=True); n=persian_digits(num); nb=bbox(d,n,nf); nw=nb[2]-nb[0]
+    d.rounded_rectangle((x+24,y+112,x+24+max(54,nw+26),y+150),radius=18,fill=(255,255,255,12),outline=(255,255,255,22),width=1)
+    d.text((x+24+max(54,nw+26)/2,y+131),n,**rtl_args(nf,(220,224,235),'mm','center'))
+    home_x=x+w*.27; away_x=x+w*.73; logo_y=y+185
+    draw_logo(im,m['home_logo'],home_x,logo_y,138,accent); draw_logo(im,m['away_logo'],away_x,logo_y,138,accent)
+    # central VS / clock motif
+    vf=get_font(18,bold=True,english=True); d.text((x+w/2,y+165),'VS',font=vf,fill=(113,123,151),anchor='mm')
+    tw,th=170,68; tx=x+w/2-tw/2; ty=y+220
+    d.rounded_rectangle((tx+2,ty+5,tx+tw+2,ty+th+5),radius=20,fill=(0,0,0,65)); d.rounded_rectangle((tx,ty,tx+tw,ty+th),radius=20,fill=accent)
+    tf=get_font(34,bold=True); tt=persian_digits(m['time']); d.text((x+w/2,ty+th/2-2),tt,**rtl_args(tf,(255,255,255),'mm','center'))
+    hf=fit_font(d,m['home'],w*.36,31,18); af=fit_font(d,m['away'],w*.36,31,18)
+    centered(d,home_x,y+301,m['home'],hf,(249,250,253)); centered(d,away_x,y+301,m['away'],af,(249,250,253))
+    sf=get_font(16); centered(d,home_x,y+350,'میزبان',sf,(113,122,149)); centered(d,away_x,y+350,'مهمان',sf,(113,122,149))
 
 def create_poster(matches):
-    columns = 2
+    cols=2; card_w=int((WIDTH-MARGIN*2-GAP)/2); card_h=395; rows=math.ceil(len(matches)/2); header=385; footer=105
+    H=header+rows*card_h+max(0,rows-1)*GAP+footer+60; im=background(WIDTH,H); d=ImageDraw.Draw(im)
+    d.rectangle((0,0,WIDTH,8),fill=(132,82,246)); d.rectangle((0,8,WIDTH,11),fill=(65,125,240,120))
+    # left brand
+    ef=get_font(24,bold=True,english=True); d.text((MARGIN,50),'FOOTBALL DAILY',font=ef,fill=(151,139,255))
+    d.text((MARGIN,86),'MATCH CENTER',font=get_font(14,bold=True,english=True),fill=(93,101,130))
+    # right title
+    title='بازی‌های امروز'; tf=get_font(72,bold=True); draw_rtl(d,(WIDTH-MARGIN,92),title,tf,(250,251,255),'ra')
+    sub='برنامه مسابقات فوتبال امروز'; draw_rtl(d,(WIDTH-MARGIN,181),sub,get_font(25),(145,153,180),'ra')
+    # date glass panel
+    date='تاریخ '+format_date(get_today()); df=get_font(24,bold=True); dw=bbox(d,date,df)[2]-bbox(d,date,df)[0]; pw=max(300,dw+60)
+    d.rounded_rectangle((MARGIN,145,MARGIN+pw,211),radius=20,fill=(255,255,255,14),outline=(255,255,255,30),width=2)
+    draw_rtl(d,(MARGIN+pw-28,160),date,df,(236,239,247),'ra')
+    d.line((MARGIN,285,WIDTH-MARGIN,285),fill=(255,255,255,35),width=2)
+    # count label + mini sports icon
+    count=persian_digits(len(matches))+' مسابقه امروز'; draw_rtl(d,(WIDTH-MARGIN,326),count,get_font(23,bold=True),(143,151,178),'ra')
+    d.ellipse((MARGIN,316,MARGIN+20,336),fill=(132,82,246)); d.arc((MARGIN+4,320,MARGIN+16,332),0,270,fill=(255,255,255),width=2)
+    start=header
+    for i,m in enumerate(matches):
+        row,col=i//2,i%2; x=MARGIN+col*(card_w+GAP); y=start+row*(card_h+GAP); draw_match_card(im,m,x,y,card_w,card_h,i+1)
+    fy=start+rows*card_h+max(0,rows-1)*GAP+30; d.line((MARGIN,fy,WIDTH-MARGIN,fy),fill=(255,255,255,30),width=2)
+    draw_rtl(d,(WIDTH-MARGIN,fy+29),'تمامی ساعت‌ها به وقت تهران',get_font(20),(112,121,148),'ra')
+    d.ellipse((MARGIN,fy+30,MARGIN+16,fy+46),fill=(132,82,246))
+    out=io.BytesIO(); im.convert('RGB').save(out,'JPEG',quality=97,optimize=True); out.seek(0); return out
 
-    card_width = int(
-        (
-            WIDTH
-            - MARGIN * 2
-            - GAP
-        ) / 2
-    )
-
-    rows = math.ceil(
-        len(matches) / columns
-    )
-
-    height = (
-        HEADER_HEIGHT
-        + rows * CARD_HEIGHT
-        + max(0, rows - 1) * GAP
-        + FOOTER_HEIGHT
-        + 34
-    )
-
-    image = create_background(
-        WIDTH,
-        height
-    )
-
-    add_background_effects(
-        image
-    )
-
-    draw = ImageDraw.Draw(
-        image
-    )
-
-    # نوار بالایی
-    draw.rectangle(
-        (
-            0,
-            0,
-            WIDTH,
-            7
-        ),
-        fill=(128, 86, 245, 255)
-    )
-
-    # عنوان کوچک انگلیسی
-    mini_font = get_font(
-        18,
-        bold=True,
-        latin=True
-    )
-
-    draw.text(
-        (
-            MARGIN,
-            44
-        ),
-        "MATCHDAY",
-        font=mini_font,
-        fill=(151, 137, 255)
-    )
-
-    # تاریخ
-    date_font = get_font(
-        21,
-        bold=True
-    )
-
-    date_label = (
-        "تاریخ  "
-        + persian_digits(
-            format_date(
-                get_today()
-            )
-        )
-    )
-
-    date_width = text_width(
-        draw,
-        date_label,
-        date_font
-    )
-
-    date_box_width = max(
-        230,
-        date_width + 34
-    )
-
-    rounded(
-        draw,
-        (
-            MARGIN,
-            83,
-            MARGIN + date_box_width,
-            135
-        ),
-        16,
-        (255, 255, 255, 13),
-        (255, 255, 255, 28),
-        1
-    )
-
-    draw_rtl(
-        draw,
-        (
-            MARGIN + date_box_width - 16,
-            109
-        ),
-        date_label,
-        date_font,
-        (220, 224, 236),
-        anchor="rm"
-    )
-
-    # عنوان اصلی
-    title_font = get_font(
-        70,
-        bold=True
-    )
-
-    draw_rtl(
-        draw,
-        (
-            WIDTH - MARGIN,
-            83
-        ),
-        "بازی‌های امروز",
-        title_font,
-        (250, 250, 253),
-        anchor="ra"
-    )
-
-    # زیرعنوان
-    subtitle_font = get_font(
-        24,
-        bold=False
-    )
-
-    draw_rtl(
-        draw,
-        (
-            WIDTH - MARGIN,
-            168
-        ),
-        "برنامه مسابقات فوتبال امروز",
-        subtitle_font,
-        (135, 144, 169),
-        anchor="ra"
-    )
-
-    # تعداد بازی‌ها
-    count_font = get_font(
-        22,
-        bold=True
-    )
-
-    count_text = (
-        persian_digits(
-            len(matches)
-        )
-        + " مسابقه"
-    )
-
-    draw_rtl(
-        draw,
-        (
-            WIDTH - MARGIN,
-            216
-        ),
-        count_text,
-        count_font,
-        (177, 184, 205),
-        anchor="ra"
-    )
-
-    # خط جداکننده
-    draw.line(
-        (
-            MARGIN,
-            267,
-            WIDTH - MARGIN,
-            267
-        ),
-        fill=(255, 255, 255, 30),
-        width=1
-    )
-
-    draw.ellipse(
-        (
-            MARGIN,
-            260,
-            MARGIN + 14,
-            274
-        ),
-        fill=(128, 86, 245, 255)
-    )
-
-    # کارت‌ها
-    start_y = HEADER_HEIGHT
-
-    for index, match in enumerate(matches):
-        row = index // columns
-        col = index % columns
-
-        x = (
-            MARGIN
-            + col * (
-                card_width
-                + GAP
-            )
-        )
-
-        y = (
-            start_y
-            + row * (
-                CARD_HEIGHT
-                + GAP
-            )
-        )
-
-        draw_match_card(
-            image,
-            match,
-            x,
-            y,
-            card_width,
-            CARD_HEIGHT,
-            index + 1
-        )
-
-    # فوتر
-    footer_y = (
-        start_y
-        + rows * CARD_HEIGHT
-        + max(0, rows - 1) * GAP
-        + 24
-    )
-
-    draw.line(
-        (
-            MARGIN,
-            footer_y,
-            WIDTH - MARGIN,
-            footer_y
-        ),
-        fill=(255, 255, 255, 25),
-        width=1
-    )
-
-    footer_font = get_font(
-        18,
-        bold=False
-    )
-
-    draw_rtl(
-        draw,
-        (
-            WIDTH - MARGIN,
-            footer_y + 34
-        ),
-        "تمامی ساعت‌ها به وقت تهران",
-        footer_font,
-        (103, 112, 139),
-        anchor="ra"
-    )
-
-    # خروجی
-    output = io.BytesIO()
-
-    image.convert("RGB").save(
-        output,
-        format="JPEG",
-        quality=96,
-        optimize=True
-    )
-
-    output.seek(0)
-
-    return output
-
-
-# ============================================================
-# تلگرام
-# ============================================================
-
-def send_photo(photo, caption):
-    url = (
-        f"https://api.telegram.org/bot"
-        f"{BOT_TOKEN}/sendPhoto"
-    )
-
-    files = {
-        "photo": (
-            "football_today.jpg",
-            photo,
-            "image/jpeg"
-        )
-    }
-
-    data = {
-        "chat_id": CHAT_ID,
-        "caption": caption
-    }
-
-    response = requests.post(
-        url,
-        files=files,
-        data=data,
-        timeout=60
-    )
-
-    response.raise_for_status()
-
-    print(
-        "Telegram message sent."
-    )
-
-
-def send_message(message):
-    url = (
-        f"https://api.telegram.org/bot"
-        f"{BOT_TOKEN}/sendMessage"
-    )
-
-    response = requests.post(
-        url,
-        data={
-            "chat_id": CHAT_ID,
-            "text": message
-        },
-        timeout=30
-    )
-
-    response.raise_for_status()
-
-
-# ============================================================
-# MAIN
-# ============================================================
+def send_photo(photo,caption):
+    url=f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'; files={'photo':('football_today.jpg',photo,'image/jpeg')}; data={'chat_id':CHAT_ID,'caption':caption}
+    r=requests.post(url,files=files,data=data,timeout=60); r.raise_for_status(); print('Telegram message sent.')
 
 def main():
-    print("=" * 60)
-    print("FOOTBALL DAILY BOT — NEW DESIGN")
-    print("=" * 60)
-
-    if not BOT_TOKEN:
-        raise ValueError(
-            "BOT_TOKEN is missing"
-        )
-
-    if not CHAT_ID:
-        raise ValueError(
-            "CHAT_ID is missing"
-        )
-
-    if not FOOTBALL_API_TOKEN:
-        raise ValueError(
-            "FOOTBALL_API_TOKEN is missing"
-        )
-
-    today = get_today()
-
-    print(
-        f"Today in Tehran: {today}"
-    )
-
-    all_matches = []
-
-    for code, league_name in COMPETITIONS.items():
-        print(
-            f"Checking {code}..."
-        )
-
-        matches = get_matches(
-            code,
-            today
-        )
-
-        print(
-            f"{code}: {len(matches)} matches"
-        )
-
+    print('='*60); print('FOOTBALL DAILY BOT'); print('='*60)
+    for name,val in [('BOT_TOKEN',BOT_TOKEN),('CHAT_ID',CHAT_ID),('FOOTBALL_API_TOKEN',FOOTBALL_API_TOKEN)]:
+        if not val: raise ValueError(f'{name} is missing')
+    today=get_today(); print('Today in Tehran:',today); all_matches=[]
+    for code,league_name in COMPETITIONS.items():
+        print('Checking',code); matches=get_matches(code,today); print(code,len(matches),'matches')
         for match in matches:
-            status = match.get(
-                "status",
-                ""
-            )
-
-            if status in (
-                "CANCELLED",
-                "POSTPONED"
-            ):
-                continue
-
-            utc = match.get(
-                "utcDate"
-            )
-
-            if not utc:
-                continue
-
-            home_data = match.get(
-                "homeTeam",
-                {}
-            ) or {}
-
-            away_data = match.get(
-                "awayTeam",
-                {}
-            ) or {}
-
-            home_original = repair_text(
-                home_data.get(
-                    "name",
-                    "تیم میزبان"
-                )
-            )
-
-            away_original = repair_text(
-                away_data.get(
-                    "name",
-                    "تیم مهمان"
-                )
-            )
-
-            home_name = team_display_name(
-                home_original
-            )
-
-            away_name = team_display_name(
-                away_original
-            )
-
-            all_matches.append(
-                {
-                    "competition_code": code,
-                    "league_name": league_name,
-                    "home": home_name,
-                    "away": away_name,
-                    "home_logo": download_logo(
-                        home_data.get("crest")
-                    ),
-                    "away_logo": download_logo(
-                        away_data.get("crest")
-                    ),
-                    "time": match_time(utc),
-                    "utc": utc
-                }
-            )
-
-    all_matches.sort(
-        key=lambda item: item["utc"]
-    )
-
-    print(
-        f"TOTAL MATCHES: {len(all_matches)}"
-    )
-
+            if match.get('status') in ('CANCELLED','POSTPONED'): continue
+            utc=match.get('utcDate');
+            if not utc: continue
+            home=repair_text(match.get('homeTeam',{}).get('name','تیم میزبان')); away=repair_text(match.get('awayTeam',{}).get('name','تیم مهمان'))
+            all_matches.append({'competition_code':code,'league_name':league_name,'home':TEAM_NAMES.get(home,home),'away':TEAM_NAMES.get(away,away),'home_logo':download_logo(match.get('homeTeam',{}).get('crest')),'away_logo':download_logo(match.get('awayTeam',{}).get('crest')),'time':match_time(utc),'utc':utc})
+    all_matches.sort(key=lambda z:z['utc']); print('TOTAL MATCHES:',len(all_matches))
     if not all_matches:
-        message = (
-            "⚽ بازی‌های امروز\n\n"
-            f"📅 تاریخ: {format_date(today)}\n\n"
-            "در ۹ لیگ منتخب امروز "
-            "مسابقه‌ای پیدا نشد."
-        )
+        url=f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'; msg='⚽ بازی‌های امروز\n\n📅 تاریخ: '+format_date(today)+'\n\nدر ۹ لیگ منتخب امروز مسابقه‌ای پیدا نشد.'; r=requests.post(url,data={'chat_id':CHAT_ID,'text':msg},timeout=30); r.raise_for_status(); return
+    poster=create_poster(all_matches); caption='⚽ بازی‌های امروز\n📅 '+format_date(today)+'\n🎯 '+persian_digits(len(all_matches))+' مسابقه\n🕐 تمامی ساعت‌ها به وقت تهران'; send_photo(poster,caption); print('DONE')
 
-        send_message(message)
-
-        print(
-            "No matches found."
-        )
-
-        return
-
-    print(
-        "Creating new poster..."
-    )
-
-    poster = create_poster(
-        all_matches
-    )
-
-    caption = (
-        "⚽ بازی‌های امروز\n"
-        f"📅 {format_date(today)}\n"
-        f"🎯 {persian_digits(len(all_matches))} مسابقه\n"
-        "🕐 تمامی ساعت‌ها به وقت تهران"
-    )
-
-    send_photo(
-        poster,
-        caption
-    )
-
-    print(
-        "DONE"
-    )
-
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    main()
+if __name__=='__main__': main()
