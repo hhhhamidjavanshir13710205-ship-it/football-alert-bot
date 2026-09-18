@@ -1,7 +1,7 @@
 import os
 import time
 import requests
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -163,18 +163,102 @@ def send_message(text):
         timeout=30
     )
 
-    print("Telegram:", response.status_code)
+    print("Telegram message:", response.status_code)
     print(response.text)
+
+    return response.ok
+
+
+def send_match_with_logos(match, league, flag):
+    """
+    ارسال مسابقه با دو لوگوی واقعی تیم‌ها.
+    لوگوها مستقیماً از Football-Data.org گرفته می‌شوند.
+    """
+
+    home_team = match.get("homeTeam", {})
+    away_team = match.get("awayTeam", {})
+
+    home_original = home_team.get("name", "تیم میزبان")
+    away_original = away_team.get("name", "تیم مهمان")
+
+    home = TEAM_NAMES.get(home_original, home_original)
+    away = TEAM_NAMES.get(away_original, away_original)
+
+    home_crest = home_team.get("crest")
+    away_crest = away_team.get("crest")
+
+    utc_date = match["utcDate"]
+
+    dt = datetime.fromisoformat(
+        utc_date.replace("Z", "+00:00")
+    )
+
+    iran_timezone = ZoneInfo("Asia/Tehran")
+
+    iran_time = dt.astimezone(iran_timezone)
+    time_text = iran_time.strftime("%H:%M")
+
+    caption = (
+        f"{league}\n\n"
+        f"{flag}  {home}\n"
+        f"        ⚽\n"
+        f"{flag}  {away}\n\n"
+        f"🕐 ساعت {time_text}"
+    )
+
+    # اگر هر دو لوگو موجود باشند
+    if home_crest and away_crest:
+
+        media = [
+            {
+                "type": "photo",
+                "media": home_crest,
+                "caption": caption
+            },
+            {
+                "type": "photo",
+                "media": away_crest
+            }
+        ]
+
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup"
+
+        response = requests.post(
+            url,
+            json={
+                "chat_id": CHAT_ID,
+                "media": media
+            },
+            timeout=30
+        )
+
+        print(
+            "Telegram logos:",
+            home,
+            "+",
+            away,
+            response.status_code
+        )
+
+        if response.ok:
+            return True
+
+        print(response.text)
+
+    # اگر لوگو در API موجود نبود، متن مسابقه ارسال شود
+    fallback = (
+        f"{league}\n"
+        f"⚽ {flag} {home} - {flag} {away}\n"
+        f"🕐 {time_text}"
+    )
+
+    return send_message(fallback)
 
 
 def get_today():
     return datetime.now(
         ZoneInfo("Asia/Tehran")
     ).strftime("%Y-%m-%d")
-
-
-def get_team_name(name):
-    return TEAM_NAMES.get(name, name)
 
 
 def get_matches(competition, date):
@@ -196,10 +280,18 @@ def get_matches(competition, date):
         timeout=30
     )
 
-    print(competition, "API:", response.status_code)
+    print(
+        competition,
+        "API:",
+        response.status_code
+    )
 
     if response.status_code == 429:
-        print("Rate limit reached. Waiting 45 seconds...")
+
+        print(
+            "Rate limit reached. Waiting 45 seconds..."
+        )
+
         time.sleep(45)
 
         response = requests.get(
@@ -216,7 +308,9 @@ def get_matches(competition, date):
         )
 
     if response.status_code != 200:
+
         print(response.text[:500])
+
         return []
 
     data = response.json()
@@ -225,6 +319,7 @@ def get_matches(competition, date):
 
 
 def main():
+
     date = get_today()
 
     print("================================")
@@ -236,7 +331,10 @@ def main():
 
     for competition, league_name in COMPETITIONS.items():
 
-        print("Checking:", league_name)
+        print(
+            "Checking:",
+            league_name
+        )
 
         matches = get_matches(
             competition,
@@ -244,61 +342,54 @@ def main():
         )
 
         for match in matches:
+
             match["league_code"] = competition
             match["league_name"] = league_name
+
             all_matches.append(match)
 
-    print("TOTAL MATCHES:", len(all_matches))
+    print(
+        "TOTAL MATCHES:",
+        len(all_matches)
+    )
 
     if not all_matches:
+
         send_message(
             f"⚽ بازی‌ای برای امروز پیدا نشد.\n\n"
             f"📅 تاریخ: {date}"
         )
+
         return
 
-    message = (
+    # پیام عنوان روز
+    header = (
         f"⚽ بازی‌های امروز\n"
         f"📅 تاریخ: {date}\n\n"
+        f"🛡️ مسابقات ۹ لیگ منتخب"
     )
 
-    iran_timezone = ZoneInfo("Asia/Tehran")
+    send_message(header)
 
+    # ارسال مسابقات همراه لوگو
     for match in all_matches:
 
         competition = match["league_code"]
         league = match["league_name"]
-
-        home_original = match["homeTeam"]["name"]
-        away_original = match["awayTeam"]["name"]
-
-        home = get_team_name(home_original)
-        away = get_team_name(away_original)
 
         flag = COUNTRY_FLAGS.get(
             competition,
             "⚽"
         )
 
-        utc_date = match["utcDate"]
-
-        dt = datetime.fromisoformat(
-            utc_date.replace("Z", "+00:00")
+        send_match_with_logos(
+            match,
+            league,
+            flag
         )
 
-        iran_time = dt.astimezone(
-            iran_timezone
-        )
-
-        time_text = iran_time.strftime("%H:%M")
-
-        message += (
-            f"{league}\n"
-            f"⚽ {flag} {home} - {flag} {away}\n"
-            f"🕐 {time_text}\n\n"
-        )
-
-    send_message(message)
+        # فاصله کوتاه برای جلوگیری از فشار روی Telegram API
+        time.sleep(1)
 
 
 if __name__ == "__main__":
