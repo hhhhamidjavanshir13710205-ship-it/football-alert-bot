@@ -1,6 +1,8 @@
 import os
 import requests
-from datetime import datetime, timezone
+import jdatetime
+
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
@@ -8,16 +10,24 @@ from zoneinfo import ZoneInfo
 # تنظیمات
 # =========================================================
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID", "YOUR_CHAT_ID")
+BOT_TOKEN = os.getenv(
+    "BOT_TOKEN",
+    "YOUR_TELEGRAM_BOT_TOKEN"
+)
+
+CHAT_ID = os.getenv(
+    "CHAT_ID",
+    "YOUR_CHAT_ID"
+)
+
 FOOTBALL_API_TOKEN = os.getenv(
     "FOOTBALL_API_TOKEN",
     "YOUR_FOOTBALL_DATA_API_TOKEN"
 )
 
-TEHRAN_TZ = ZoneInfo("Asia/Tehran")
-
 API_BASE = "https://api.football-data.org/v4"
+
+TEHRAN_TZ = ZoneInfo("Asia/Tehran")
 
 
 # =========================================================
@@ -27,48 +37,38 @@ API_BASE = "https://api.football-data.org/v4"
 COMPETITIONS = {
     "PL": {
         "name": "لیگ برتر انگلیس",
-        "flag": "🏴",
+        "flag": "🏴"
     },
 
     "PD": {
         "name": "لالیگا",
-        "flag": "🇪🇸",
+        "flag": "🇪🇸"
     },
 
     "SA": {
         "name": "سری آ",
-        "flag": "🇮🇹",
+        "flag": "🇮🇹"
     },
 
     "BL1": {
         "name": "بوندسلیگا",
-        "flag": "🇩🇪",
+        "flag": "🇩🇪"
     },
 
     "FL1": {
         "name": "لیگ ۱ فرانسه",
-        "flag": "🇫🇷",
+        "flag": "🇫🇷"
     },
 
     "DED": {
         "name": "اردیویسه",
-        "flag": "🇳🇱",
+        "flag": "🇳🇱"
     },
 
     "PPL": {
         "name": "لیگ پرتغال",
-        "flag": "🇵🇹",
-    },
-
-    "BSA": {
-        "name": "سری آ برزیل",
-        "flag": "🇧🇷",
-    },
-
-    "CL": {
-        "name": "لیگ قهرمانان اروپا",
-        "flag": "🇪🇺",
-    },
+        "flag": "🇵🇹"
+    }
 }
 
 
@@ -78,7 +78,7 @@ COMPETITIONS = {
 
 TEAM_NAMES = {
 
-    # ---------------- England ----------------
+    # ================= ENGLAND =================
 
     "Chelsea FC": "چلسی",
     "Brentford FC": "برنتفورد",
@@ -101,7 +101,7 @@ TEAM_NAMES = {
     "Southampton FC": "ساوتهمپتون",
     "Ipswich Town FC": "ایپسویچ",
 
-    # ---------------- Spain ----------------
+    # ================= SPAIN =================
 
     "FC Barcelona": "بارسلونا",
     "Real Madrid CF": "رئال مادرید",
@@ -124,10 +124,11 @@ TEAM_NAMES = {
     "RCD Espanyol de Barcelona": "اسپانیول",
     "Elche CF": "الچه",
 
-    # ---------------- Italy ----------------
+    # ================= ITALY =================
 
     "FC Internazionale Milano": "اینتر",
-    "AC Milan": "آث میلان",
+    "Inter Milan": "اینتر",
+    "AC Milan": "میلان",
     "Juventus FC": "یوونتوس",
     "SSC Napoli": "ناپولی",
     "AS Roma": "رم",
@@ -147,9 +148,10 @@ TEAM_NAMES = {
     "AC Monza": "مونتزا",
     "US Sassuolo Calcio": "ساسولو",
 
-    # ---------------- Germany ----------------
+    # ================= GERMANY =================
 
     "FC Bayern München": "بایرن مونیخ",
+    "FC Bayern Munich": "بایرن مونیخ",
     "Borussia Dortmund": "بوروسیا دورتموند",
     "RB Leipzig": "لایپزیگ",
     "Bayer 04 Leverkusen": "بایرلورکوزن",
@@ -167,7 +169,7 @@ TEAM_NAMES = {
     "FC St. Pauli 1910": "سن پائولی",
     "Holstein Kiel": "هولشتاین کیل",
 
-    # ---------------- France ----------------
+    # ================= FRANCE =================
 
     "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
     "Olympique de Marseille": "مارسی",
@@ -187,10 +189,10 @@ TEAM_NAMES = {
     "AS Saint-Étienne": "سن‌اتین",
     "Angers SCO": "آنژه",
 
-    # ---------------- Netherlands ----------------
+    # ================= NETHERLANDS =================
 
     "Ajax": "آژاکس",
-    "PSV": "پی‌اس‌وی آیندهوون",
+    "PSV": "پی‌اس‌وی",
     "Feyenoord Rotterdam": "فاینورد",
     "FC Utrecht": "اوترخت",
     "AZ": "آلکمار",
@@ -202,7 +204,7 @@ TEAM_NAMES = {
     "N.E.C.": "نایمخن",
     "Sparta Rotterdam": "اسپارتا روتردام",
 
-    # ---------------- Portugal ----------------
+    # ================= PORTUGAL =================
 
     "SL Benfica": "بنفیکا",
     "FC Porto": "پورتو",
@@ -212,136 +214,83 @@ TEAM_NAMES = {
 
 
 # =========================================================
-# Custom Emoji ID تیم‌ها
-#
-# اینجا ID واقعی Custom Emoji تلگرام را قرار بده.
-#
-# مثال:
-#
-# "Chelsea FC": "5368324170671202286",
-#
-# اگر خالی باشد، فقط ایموجی معمولی یا اسم تیم نمایش داده می‌شود.
-# =========================================================
-
-TEAM_EMOJI_IDS = {
-
-    "Chelsea FC": "",
-    "Brentford FC": "",
-
-    "FC Barcelona": "",
-    "Real Madrid CF": "",
-
-    "FC Bayern München": "",
-    "Borussia Dortmund": "",
-
-    "AC Milan": "",
-    "FC Internazionale Milano": "",
-    "Juventus FC": "",
-
-    "Paris Saint-Germain FC": "",
-    "AS Monaco FC": "",
-
-    "Ajax": "",
-    "PSV": "",
-
-    "SL Benfica": "",
-    "FC Porto": "",
-    "Sporting CP": "",
-}
-
-
-# =========================================================
-# ایموجی جایگزین برای زمانی که Custom Emoji نداریم
-# =========================================================
-
-TEAM_FALLBACK_EMOJI = {
-
-    "Chelsea FC": "🔵",
-    "Brentford FC": "🐝",
-
-    "FC Barcelona": "🔴🔵",
-    "Real Madrid CF": "⚪",
-
-    "FC Bayern München": "🔴",
-    "Borussia Dortmund": "🟡",
-
-    "AC Milan": "🔴⚫",
-    "FC Internazionale Milano": "🔵⚫",
-    "Juventus FC": "⚫⚪",
-
-    "Paris Saint-Germain FC": "🔵🔴",
-    "AS Monaco FC": "🔴⚪",
-
-    "Ajax": "🔴⚪",
-    "PSV": "🔴⚪",
-
-    "SL Benfica": "🔴",
-    "FC Porto": "🔵",
-    "Sporting CP": "🟢",
-}
-
-
-# =========================================================
-# گرفتن تاریخ امروز تهران
-# =========================================================
-
-def get_today():
-    now = datetime.now(TEHRAN_TZ)
-    return now.strftime("%Y-%m-%d")
-
-
-# =========================================================
 # تبدیل نام تیم
 # =========================================================
 
-def get_team_name(team_name):
+def get_team_name(name):
 
-    return TEAM_NAMES.get(team_name, team_name)
+    return TEAM_NAMES.get(name, name)
 
 
 # =========================================================
-# ساخت Custom Emoji
+# استایل اسم تیم
 # =========================================================
 
-def get_team_emoji(team_name):
+def style_team_name(name):
 
-    emoji_id = TEAM_EMOJI_IDS.get(team_name, "").strip()
+    name = get_team_name(name)
 
-    # اگر Custom Emoji ID داریم
-    if emoji_id:
+    # فاصله برای ظاهر کشیده‌تر
+    replacements = {
+        " ": " ",
+    }
 
-        # ایموجی fallback داخل تگ قرار می‌گیرد
-        fallback = TEAM_FALLBACK_EMOJI.get(
-            team_name,
-            "⚽"
-        )
+    for old, new in replacements.items():
+        name = name.replace(old, new)
 
-        return f'<tg-emoji emoji-id="{emoji_id}">{fallback}</tg-emoji>'
+    return name
 
-    # اگر Custom Emoji نداریم
-    return TEAM_FALLBACK_EMOJI.get(
-        team_name,
-        "⚽"
+
+# =========================================================
+# تاریخ شمسی ایران
+# =========================================================
+
+def get_persian_date():
+
+    now = datetime.now(TEHRAN_TZ)
+
+    jalali = jdatetime.datetime.fromgregorian(
+        datetime=now
+    )
+
+    months = [
+        "فروردین",
+        "اردیبهشت",
+        "خرداد",
+        "تیر",
+        "مرداد",
+        "شهریور",
+        "مهر",
+        "آبان",
+        "آذر",
+        "دی",
+        "بهمن",
+        "اسفند"
+    ]
+
+    return (
+        f"{jalali.day} "
+        f"{months[jalali.month - 1]} "
+        f"{jalali.year}"
     )
 
 
 # =========================================================
-# نام نهایی تیم برای پیام
+# تاریخ میلادی برای API
 # =========================================================
 
-def format_team(team_name):
+def get_api_date():
 
-    emoji = get_team_emoji(team_name)
-    name = get_team_name(team_name)
+    now = datetime.now(TEHRAN_TZ)
 
-    return f"{emoji} {name}"
+    return now.strftime("%Y-%m-%d")
 
 
 # =========================================================
-# گرفتن بازی‌های یک لیگ
+# دریافت بازی‌های یک لیگ
 # =========================================================
 
-def fetch_competition_matches(
+def fetch_matches(
     competition_code,
     date_from,
     date_to
@@ -354,12 +303,12 @@ def fetch_competition_matches(
 
     headers = {
         "X-Auth-Token": FOOTBALL_API_TOKEN,
-        "Accept": "application/json",
+        "Accept": "application/json"
     }
 
     params = {
         "dateFrom": date_from,
-        "dateTo": date_to,
+        "dateTo": date_to
     }
 
     try:
@@ -368,13 +317,13 @@ def fetch_competition_matches(
             url,
             headers=headers,
             params=params,
-            timeout=20,
+            timeout=20
         )
 
         if response.status_code != 200:
 
             print(
-                f"API Error {competition_code}: "
+                f"خطا در لیگ {competition_code}: "
                 f"{response.status_code}"
             )
 
@@ -382,33 +331,35 @@ def fetch_competition_matches(
 
             return []
 
-        data = response.json()
-
-        return data.get("matches", [])
+        return response.json().get(
+            "matches",
+            []
+        )
 
     except requests.RequestException as e:
 
         print(
-            f"Request Error {competition_code}: {e}"
+            "خطای اتصال:",
+            e
         )
 
         return []
 
 
 # =========================================================
-# گرفتن همه بازی‌های امروز
+# جمع‌آوری بازی‌ها
 # =========================================================
 
 def collect_matches():
 
-    today = get_today()
+    today = get_api_date()
 
     all_matches = []
 
-    for competition_code in COMPETITIONS:
+    for code in COMPETITIONS:
 
-        matches = fetch_competition_matches(
-            competition_code,
+        matches = fetch_matches(
+            code,
             today,
             today
         )
@@ -420,17 +371,16 @@ def collect_matches():
                 ""
             )
 
-            # بازی‌های لغوشده و به تعویق افتاده نمایش داده نشوند
             if status in [
                 "CANCELLED",
                 "POSTPONED",
-                "SUSPENDED",
+                "SUSPENDED"
             ]:
                 continue
 
-            match["_competition_code"] = (
-                competition_code
-            )
+            match[
+                "_competition_code"
+            ] = code
 
             all_matches.append(match)
 
@@ -438,20 +388,19 @@ def collect_matches():
 
 
 # =========================================================
-# ساعت بازی به وقت تهران
+# ساعت تهران
 # =========================================================
 
 def get_match_time(match):
 
-    utc_date = match.get("utcDate")
+    utc_date = match.get(
+        "utcDate"
+    )
 
     if not utc_date:
         return "--:--"
 
     try:
-
-        # مثال:
-        # 2026-09-18T18:30:00Z
 
         dt = datetime.fromisoformat(
             utc_date.replace(
@@ -460,37 +409,17 @@ def get_match_time(match):
             )
         )
 
-        tehran_time = dt.astimezone(
+        tehran = dt.astimezone(
             TEHRAN_TZ
         )
 
-        # اعداد انگلیسی
-        return tehran_time.strftime("%H:%M")
+        return tehran.strftime(
+            "%H:%M"
+        )
 
     except Exception:
 
         return "--:--"
-
-
-# =========================================================
-# مرتب‌سازی بازی‌ها بر اساس ساعت
-# =========================================================
-
-def sort_matches(matches):
-
-    def sort_key(match):
-
-        utc_date = match.get(
-            "utcDate",
-            ""
-        )
-
-        return utc_date
-
-    return sorted(
-        matches,
-        key=sort_key
-    )
 
 
 # =========================================================
@@ -499,55 +428,56 @@ def sort_matches(matches):
 
 def build_message(matches):
 
-    today = get_today()
-
-    lines = []
-
-    lines.append(
-        "⚽ <b>بازی‌های امروز</b>"
-    )
-
-    lines.append(
-        f"📅 تاریخ: {today}"
-    )
-
-    lines.append("")
-
-    # گروه‌بندی بر اساس لیگ
     grouped = {}
 
     for match in matches:
 
-        competition_code = match.get(
+        code = match[
             "_competition_code"
+        ]
+
+        if code not in grouped:
+            grouped[code] = []
+
+        grouped[code].append(
+            match
         )
 
-        if competition_code not in grouped:
+    lines = []
 
-            grouped[competition_code] = []
+    # عنوان
+    lines.append(
+        "🏆 <b>بازی‌های امروز</b>"
+    )
 
-        grouped[
-            competition_code
-        ].append(match)
+    lines.append(
+        f"📅 {get_persian_date()} 🇮🇷"
+    )
 
-    # ترتیب نمایش لیگ‌ها
-    for competition_code, competition in COMPETITIONS.items():
+    lines.append("")
+
+    # لیگ‌ها
+    for code, competition in COMPETITIONS.items():
 
         league_matches = grouped.get(
-            competition_code,
+            code,
             []
         )
 
         if not league_matches:
             continue
 
-        league_matches = sort_matches(
-            league_matches
+        # مرتب‌سازی بر اساس زمان
+        league_matches.sort(
+            key=lambda x: x.get(
+                "utcDate",
+                ""
+            )
         )
 
         lines.append(
             f'{competition["flag"]} '
-            f'<b>{competition["name"]}</b>'
+            f'<b>━━━ {competition["name"]} ━━━</b>'
         )
 
         lines.append("")
@@ -559,7 +489,7 @@ def build_message(matches):
                 {}
             ).get(
                 "name",
-                "تیم میزبان"
+                "نامشخص"
             )
 
             away_team = match.get(
@@ -567,44 +497,45 @@ def build_message(matches):
                 {}
             ).get(
                 "name",
-                "تیم مهمان"
+                "نامشخص"
             )
 
-            home = format_team(
+            home = style_team_name(
                 home_team
             )
 
-            away = format_team(
+            away = style_team_name(
                 away_team
             )
 
-            match_time = get_match_time(
+            time = get_match_time(
                 match
             )
 
             lines.append(
-                f"⚽ {home} - {away}"
+                f"🏟️ <b>{home}</b>  🆚  <b>{away}</b>"
             )
 
             lines.append(
-                f"🕐 {match_time}"
+                f"🕐 {time}"
             )
 
             lines.append("")
 
-        # فاصله بین لیگ‌ها
+        lines.append(
+            "━━━━━━━━━━━━━━━━"
+        )
+
         lines.append("")
 
-    # حذف خطوط خالی اضافه آخر پیام
     while lines and not lines[-1].strip():
-
         lines.pop()
 
     return "\n".join(lines)
 
 
 # =========================================================
-# ارسال پیام به تلگرام
+# ارسال به تلگرام
 # =========================================================
 
 def send_message(message):
@@ -618,7 +549,7 @@ def send_message(message):
         "chat_id": CHAT_ID,
         "text": message,
         "parse_mode": "HTML",
-        "disable_web_page_preview": True,
+        "disable_web_page_preview": True
     }
 
     try:
@@ -626,13 +557,13 @@ def send_message(message):
         response = requests.post(
             url,
             data=data,
-            timeout=20,
+            timeout=20
         )
 
         if response.status_code != 200:
 
             print(
-                "Telegram Error:",
+                "خطای تلگرام:",
                 response.text
             )
 
@@ -643,14 +574,14 @@ def send_message(message):
         if not result.get("ok"):
 
             print(
-                "Telegram Error:",
+                "خطای تلگرام:",
                 result
             )
 
             return False
 
         print(
-            "پیام با موفقیت ارسال شد."
+            "✅ پیام با موفقیت ارسال شد."
         )
 
         return True
@@ -658,7 +589,7 @@ def send_message(message):
     except requests.RequestException as e:
 
         print(
-            "Telegram Request Error:",
+            "خطای اتصال به تلگرام:",
             e
         )
 
@@ -672,7 +603,7 @@ def send_message(message):
 def main():
 
     print(
-        "در حال دریافت بازی‌های امروز..."
+        "⏳ در حال دریافت بازی‌های امروز..."
     )
 
     matches = collect_matches()
@@ -680,9 +611,9 @@ def main():
     if not matches:
 
         message = (
-            "⚽ <b>بازی‌های امروز</b>\n"
-            f"📅 تاریخ: {get_today()}\n\n"
-            "❌ امروز بازی‌ای پیدا نشد."
+            "🏆 <b>بازی‌های امروز</b>\n"
+            f"📅 {get_persian_date()} 🇮🇷\n\n"
+            "❌ بازی‌ای برای امروز پیدا نشد."
         )
 
     else:
@@ -691,16 +622,14 @@ def main():
             matches
         )
 
-    print("\n" + message + "\n")
+    print()
+    print(message)
+    print()
 
     send_message(
         message
     )
 
-
-# =========================================================
-# Start
-# =========================================================
 
 if __name__ == "__main__":
     main()
