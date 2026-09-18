@@ -2,6 +2,7 @@ import os
 import time
 import requests
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -167,7 +168,9 @@ def send_message(text):
 
 
 def get_today():
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return datetime.now(
+        ZoneInfo("Asia/Tehran")
+    ).strftime("%Y-%m-%d")
 
 
 def get_team_name(name):
@@ -226,7 +229,7 @@ def main():
 
     print("================================")
     print("FOOTBALL ALERT BOT")
-    print("DATE:", date)
+    print("IRAN DATE:", date)
     print("================================")
 
     all_matches = []
@@ -259,6 +262,8 @@ def main():
         f"📅 تاریخ: {date}\n\n"
     )
 
+    iran_timezone = ZoneInfo("Asia/Tehran")
+
     for match in all_matches:
 
         competition = match["league_code"]
@@ -270,7 +275,10 @@ def main():
         home = get_team_name(home_original)
         away = get_team_name(away_original)
 
-        flag = COUNTRY_FLAGS.get(competition, "⚽")
+        flag = COUNTRY_FLAGS.get(
+            competition,
+            "⚽"
+        )
 
         utc_date = match["utcDate"]
 
@@ -278,7 +286,11 @@ def main():
             utc_date.replace("Z", "+00:00")
         )
 
-        time_text = dt.strftime("%H:%M")
+        iran_time = dt.astimezone(
+            iran_timezone
+        )
+
+        time_text = iran_time.strftime("%H:%M")
 
         message += (
             f"{league}\n"
