@@ -11,9 +11,6 @@ from zoneinfo import ZoneInfo
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-import arabic_reshaper
-from bidi.algorithm import get_display
-
 
 # ============================================================
 # تنظیمات
@@ -30,6 +27,7 @@ TEHRAN = ZoneInfo("Asia/Tehran")
 WIDTH = 1600
 MARGIN = 70
 GAP = 28
+
 
 # ============================================================
 # لیگ‌ها
@@ -95,11 +93,13 @@ TEAM_NAMES = {
     "RCD Espanyol de Barcelona": "اسپانیول",
     "Elche CF": "الچه",
     "Club Atlético de Madrid": "اتلتیکو مادرید",
+    "Club Atlأ©tico de Madrid": "اتلتیکو مادرید",
     "Sevilla FC": "سویا",
     "Valencia CF": "والنسیا",
     "Villarreal CF": "ویارئال",
     "Athletic Club": "اتلتیک بیلبائو",
     "Real Betis Balompié": "رئال بتیس",
+    "Real Betis Balompiأ©": "رئال بتیس",
     "Getafe CF": "ختافه",
     "Girona FC": "ژیرونا",
     "RC Celta de Vigo": "سلتاویگو",
@@ -107,7 +107,9 @@ TEAM_NAMES = {
     "Rayo Vallecano de Madrid": "رایو وایکانو",
     "RCD Mallorca": "مایورکا",
     "Deportivo Alavés": "آلاوس",
+    "Deportivo Alavأ©s": "آلاوس",
     "Real Sociedad de Fútbol": "رئال سوسیداد",
+    "Real Sociedad de Fأ؛tbol": "رئال سوسیداد",
 
     # Italy
     "FC Internazionale Milano": "اینتر",
@@ -132,13 +134,15 @@ TEAM_NAMES = {
 
     # Germany
     "FC Bayern München": "بایرن مونیخ",
+    "FC Bayern Mأ¼nchen": "بایرن مونیخ",
     "Borussia Dortmund": "دورتموند",
     "RB Leipzig": "لایپزیگ",
     "Bayer 04 Leverkusen": "بایرلورکوزن",
     "Eintracht Frankfurt": "آینتراخت فرانکفورت",
     "VfB Stuttgart": "اشتوتگارت",
-    "VfL Wolfsburg": "وولفسبورگ",
+    "VfL Wolfsburg": "ولفسبورگ",
     "Borussia Mönchengladbach": "مونشن گلادباخ",
+    "Borussia Mأ¶nchengladbach": "مونشن گلادباخ",
     "SV Werder Bremen": "وردربرمن",
     "1. FSV Mainz 05": "ماینتس",
     "TSG 1899 Hoffenheim": "هوفنهایم",
@@ -146,6 +150,7 @@ TEAM_NAMES = {
     "FC Augsburg": "آگسبورگ",
     "1. FC Union Berlin": "یونیون برلین",
     "1. FC Köln": "کلن",
+    "1. FC Kأ¶ln": "کلن",
     "Hamburger SV": "هامبورگ",
 
     # France
@@ -178,6 +183,7 @@ TEAM_NAMES = {
     "Sporting Clube de Portugal": "اسپورتینگ",
     "SC Braga": "براگا",
     "Vitória SC": "ویتوریا گیمارش",
+    "Vitأ³ria SC": "ویتوریا گیمارش",
 
     # Brazil
     "CR Flamengo": "فلامینگو",
@@ -186,6 +192,7 @@ TEAM_NAMES = {
     "Fluminense FC": "فلومیننزه",
     "Corinthians": "کورینتیانس",
     "São Paulo FC": "سائوپائولو",
+    "Sأ£o Paulo FC": "سائوپائولو",
 }
 
 
@@ -221,27 +228,122 @@ def get_font(size, bold=False):
 
 
 # ============================================================
-# پردازش صحیح فارسی
+# بررسی RAQM
 # ============================================================
 
-def fa(text):
+def check_raqm():
 
-    """
-    فقط یک بار متن فارسی را reshape و bidi می‌کند.
-    خیلی مهم:
-    بعد از این تابع دیگر از direction='rtl' استفاده نمی‌کنیم.
-    """
+    try:
+        layout_engine = ImageFont.Layout.RAQM
+
+        test_font = get_font(
+            30,
+            bold=False
+        )
+
+        print("Pillow RAQM available.")
+
+        return layout_engine
+
+    except Exception as e:
+
+        print(
+            f"WARNING: Pillow RAQM unavailable: {e}"
+        )
+
+        return None
+
+
+RAQM_ENGINE = check_raqm()
+
+
+# ============================================================
+# اصلاح متن‌های Encoding خراب
+# ============================================================
+
+def repair_text(text):
 
     if text is None:
         return ""
 
     text = str(text)
 
+    # اگر متن قبلاً درست باشد، همان را نگه می‌داریم.
+    # متن‌های فارسی خراب‌شده در فایل فعلی با cp1256 قابل بازیابی هستند.
     try:
-        reshaped = arabic_reshaper.reshape(text)
-        return get_display(reshaped)
+
+        repaired = text.encode(
+            "cp1256"
+        ).decode(
+            "utf-8"
+        )
+
+        # فقط وقتی نتیجه واقعاً بهتر شده باشد.
+        if repaired != text:
+            return repaired
+
     except Exception:
-        return text
+        pass
+
+    return text
+
+
+# ============================================================
+# متن فارسی با RAQM
+# ============================================================
+
+def draw_rtl(
+    draw,
+    xy,
+    text,
+    font,
+    fill,
+    anchor="ra",
+    align="right"
+):
+
+    text = repair_text(text)
+
+    kwargs = {
+        "font": font,
+        "fill": fill,
+        "anchor": anchor,
+        "align": align,
+    }
+
+    if RAQM_ENGINE is not None:
+        kwargs["direction"] = "rtl"
+        kwargs["language"] = "fa"
+
+    draw.text(
+        xy,
+        text,
+        **kwargs
+    )
+
+
+def text_bbox(
+    draw,
+    text,
+    font,
+    direction="rtl"
+):
+
+    text = repair_text(text)
+
+    kwargs = {
+        "font": font
+    }
+
+    if RAQM_ENGINE is not None:
+        kwargs["direction"] = direction
+        kwargs["language"] = "fa"
+
+    return draw.textbbox(
+        (0, 0),
+        text,
+        **kwargs
+    )
 
 
 # ============================================================
@@ -259,29 +361,47 @@ def persian_digits(text):
 
 
 # ============================================================
-# رسم متن وسط
+# متن وسط
 # ============================================================
 
-def draw_center(draw, cx, y, text, font, fill):
+def draw_center(
+    draw,
+    cx,
+    y,
+    text,
+    font,
+    fill
+):
 
-    rendered = fa(text)
+    text = repair_text(text)
 
-    box = draw.textbbox(
-        (0, 0),
-        rendered,
-        font=font
+    box = text_bbox(
+        draw,
+        text,
+        font,
+        "rtl"
     )
 
     w = box[2] - box[0]
 
+    kwargs = {
+        "font": font,
+        "fill": fill,
+        "anchor": "ra",
+        "align": "center",
+    }
+
+    if RAQM_ENGINE is not None:
+        kwargs["direction"] = "rtl"
+        kwargs["language"] = "fa"
+
     draw.text(
         (
-            cx - w / 2,
+            cx + w / 2,
             y
         ),
-        rendered,
-        font=font,
-        fill=fill
+        text,
+        **kwargs
     )
 
 
@@ -289,21 +409,32 @@ def draw_center(draw, cx, y, text, font, fill):
 # فونت مناسب با عرض
 # ============================================================
 
-def fit_font(draw, text, max_width, max_size, min_size=20):
+def fit_font(
+    draw,
+    text,
+    max_width,
+    max_size,
+    min_size=20
+):
 
-    for size in range(max_size, min_size - 1, -2):
+    text = repair_text(text)
+
+    for size in range(
+        max_size,
+        min_size - 1,
+        -2
+    ):
 
         font = get_font(
             size,
             bold=True
         )
 
-        rendered = fa(text)
-
-        box = draw.textbbox(
-            (0, 0),
-            rendered,
-            font=font
+        box = text_bbox(
+            draw,
+            text,
+            font,
+            "rtl"
         )
 
         width = box[2] - box[0]
@@ -325,7 +456,9 @@ def get_today():
 
     return datetime.now(
         TEHRAN
-    ).strftime("%Y-%m-%d")
+    ).strftime(
+        "%Y-%m-%d"
+    )
 
 
 def format_date(date_string):
@@ -351,7 +484,7 @@ def format_date(date_string):
 
 
 # ============================================================
-# ساعت
+# ساعت تهران
 # ============================================================
 
 def match_time(utc_string):
@@ -369,7 +502,9 @@ def match_time(utc_string):
             TEHRAN
         )
 
-        return local.strftime("%H:%M")
+        return local.strftime(
+            "%H:%M"
+        )
 
     except Exception:
 
@@ -380,7 +515,10 @@ def match_time(utc_string):
 # دریافت مسابقات
 # ============================================================
 
-def get_matches(code, date_string):
+def get_matches(
+    code,
+    date_string
+):
 
     headers = {
         "X-Auth-Token": FOOTBALL_API_TOKEN
@@ -461,7 +599,9 @@ def download_logo(url):
             io.BytesIO(
                 response.content
             )
-        ).convert("RGBA")
+        ).convert(
+            "RGBA"
+        )
 
         image.thumbnail(
             (240, 240),
@@ -487,7 +627,10 @@ def download_logo(url):
 # پس‌زمینه
 # ============================================================
 
-def create_background(width, height):
+def create_background(
+    width,
+    height
+):
 
     image = Image.new(
         "RGBA",
@@ -498,11 +641,22 @@ def create_background(width, height):
 
     for y in range(height):
 
-        ratio = y / max(height - 1, 1)
+        ratio = y / max(
+            height - 1,
+            1
+        )
 
-        r = int(7 + ratio * 5)
-        g = int(10 + ratio * 5)
-        b = int(24 + ratio * 12)
+        r = int(
+            7 + ratio * 5
+        )
+
+        g = int(
+            10 + ratio * 5
+        )
+
+        b = int(
+            24 + ratio * 12
+        )
 
         for x in range(width):
 
@@ -556,7 +710,6 @@ def add_background_effects(image):
 
     w, h = image.size
 
-    # نورهای بزرگ و نرم
     draw.ellipse(
         (
             -300,
@@ -577,7 +730,6 @@ def add_background_effects(image):
         fill=(45, 100, 230, 18)
     )
 
-    # خطوط مورب خیلی ظریف
     for x in range(
         -h,
         w + h,
@@ -605,7 +757,7 @@ def add_background_effects(image):
 
 
 # ============================================================
-# سایه
+# سایه کارت
 # ============================================================
 
 def add_card_shadow(
@@ -684,7 +836,7 @@ def draw_logo(
         fill=(0, 0, 0, 70)
     )
 
-    # دایره سفید
+    # صفحه سفید
     draw.ellipse(
         (
             0,
@@ -734,15 +886,24 @@ def draw_logo(
                 plate_size - 32,
                 plate_size - 32
             ),
-            outline=(205, 209, 220, 255),
+            outline=(
+                205,
+                209,
+                220,
+                255
+            ),
             width=4
         )
 
     image.alpha_composite(
         plate,
         (
-            int(cx - plate.width / 2),
-            int(cy - plate.height / 2)
+            int(
+                cx - plate.width / 2
+            ),
+            int(
+                cy - plate.height / 2
+            )
         )
     )
 
@@ -770,10 +931,7 @@ def draw_match_card(
         (100, 110, 235)
     )
 
-    # --------------------------------------------------------
     # سایه
-    # --------------------------------------------------------
-
     add_card_shadow(
         image,
         (
@@ -784,10 +942,7 @@ def draw_match_card(
         )
     )
 
-    # --------------------------------------------------------
     # خود کارت
-    # --------------------------------------------------------
-
     draw.rounded_rectangle(
         (
             x,
@@ -799,10 +954,7 @@ def draw_match_card(
         fill=(19, 23, 42, 255)
     )
 
-    # --------------------------------------------------------
-    # نوار رنگی بالا
-    # --------------------------------------------------------
-
+    # نوار رنگی
     draw.rounded_rectangle(
         (
             x,
@@ -814,10 +966,7 @@ def draw_match_card(
         fill=accent
     )
 
-    # --------------------------------------------------------
-    # شماره مسابقه
-    # --------------------------------------------------------
-
+    # شماره
     circle = 52
 
     draw.ellipse(
@@ -858,10 +1007,7 @@ def draw_match_card(
         fill=(240, 242, 249)
     )
 
-    # --------------------------------------------------------
     # نام لیگ
-    # --------------------------------------------------------
-
     league_font = fit_font(
         draw,
         match["league_name"],
@@ -870,34 +1016,35 @@ def draw_match_card(
         18
     )
 
-    league_rendered = fa(
+    league_text = repair_text(
         match["league_name"]
     )
 
-    box = draw.textbbox(
-        (0, 0),
-        league_rendered,
-        font=league_font
+    league_box = text_bbox(
+        draw,
+        league_text,
+        league_font,
+        "rtl"
     )
 
     league_width = (
-        box[2] - box[0]
+        league_box[2]
+        - league_box[0]
     )
 
-    draw.text(
+    draw_rtl(
+        draw,
         (
-            x + width - 30 - league_width,
+            x + width - 30,
             y + 31
         ),
-        league_rendered,
-        font=league_font,
-        fill=(239, 241, 247)
+        league_text,
+        league_font,
+        (239, 241, 247),
+        anchor="ra"
     )
 
-    # --------------------------------------------------------
     # خط جداکننده
-    # --------------------------------------------------------
-
     draw.line(
         (
             x + 30,
@@ -909,10 +1056,6 @@ def draw_match_card(
         width=2
     )
 
-    # --------------------------------------------------------
-    # مختصات
-    # --------------------------------------------------------
-
     center = x + width / 2
 
     home_x = x + width * 0.27
@@ -920,10 +1063,7 @@ def draw_match_card(
 
     logo_y = y + 180
 
-    # --------------------------------------------------------
     # لوگوها
-    # --------------------------------------------------------
-
     draw_logo(
         image,
         match["home_logo"],
@@ -940,10 +1080,7 @@ def draw_match_card(
         140
     )
 
-    # --------------------------------------------------------
     # VS
-    # --------------------------------------------------------
-
     vs_font = get_font(
         24,
         bold=True
@@ -958,10 +1095,7 @@ def draw_match_card(
         (132, 140, 164)
     )
 
-    # --------------------------------------------------------
     # ساعت
-    # --------------------------------------------------------
-
     time_width = 155
     time_height = 66
 
@@ -1003,17 +1137,16 @@ def draw_match_card(
     draw.text(
         (
             center - tw / 2,
-            time_y + (time_height - th) / 2 - 6
+            time_y
+            + (time_height - th) / 2
+            - 6
         ),
         time_text,
         font=time_font,
         fill=(255, 255, 255)
     )
 
-    # --------------------------------------------------------
     # نام تیم‌ها
-    # --------------------------------------------------------
-
     home_font = fit_font(
         draw,
         match["home"],
@@ -1048,10 +1181,7 @@ def draw_match_card(
         (248, 249, 253)
     )
 
-    # --------------------------------------------------------
     # میزبان / مهمان
-    # --------------------------------------------------------
-
     small_font = get_font(
         17,
         bold=False
@@ -1082,10 +1212,8 @@ def draw_match_card(
 
 def create_poster(matches):
 
-    # دو ستون
     columns = 2
 
-    # اندازه کارت
     card_width = int(
         (
             WIDTH
@@ -1100,10 +1228,6 @@ def create_poster(matches):
         len(matches) / columns
     )
 
-    # --------------------------------------------------------
-    # ارتفاع‌ها
-    # --------------------------------------------------------
-
     header_height = 385
 
     footer_height = 100
@@ -1111,14 +1235,13 @@ def create_poster(matches):
     height = (
         header_height
         + rows * card_height
-        + max(0, rows - 1) * GAP
+        + max(
+            0,
+            rows - 1
+        ) * GAP
         + footer_height
         + 60
     )
-
-    # --------------------------------------------------------
-    # پس‌زمینه
-    # --------------------------------------------------------
 
     image = create_background(
         WIDTH,
@@ -1133,10 +1256,7 @@ def create_poster(matches):
         image
     )
 
-    # --------------------------------------------------------
     # نوار بالایی
-    # --------------------------------------------------------
-
     draw.rectangle(
         (
             0,
@@ -1147,10 +1267,7 @@ def create_poster(matches):
         fill=(126, 90, 245)
     )
 
-    # --------------------------------------------------------
-    # عنوان انگلیسی کوچک
-    # --------------------------------------------------------
-
+    # عنوان انگلیسی
     english_font = get_font(
         27,
         bold=True
@@ -1166,76 +1283,61 @@ def create_poster(matches):
         fill=(145, 132, 255)
     )
 
-    # --------------------------------------------------------
     # عنوان فارسی
-    # --------------------------------------------------------
-
     title_font = get_font(
         76,
         bold=True
     )
 
-    title = fa(
-        "بازی‌های امروز"
-    )
+    title = "بازی‌های امروز"
 
-    box = draw.textbbox(
-        (0, 0),
+    title_box = text_bbox(
+        draw,
         title,
-        font=title_font
+        title_font,
+        "rtl"
     )
 
     title_w = (
-        box[2] - box[0]
+        title_box[2]
+        - title_box[0]
     )
 
-    draw.text(
+    draw_rtl(
+        draw,
         (
-            WIDTH - MARGIN - title_w,
+            WIDTH - MARGIN,
             95
         ),
         title,
-        font=title_font,
-        fill=(250, 250, 253)
+        title_font,
+        (250, 250, 253),
+        anchor="ra"
     )
 
-    # --------------------------------------------------------
     # زیرعنوان
-    # --------------------------------------------------------
-
     subtitle_font = get_font(
         28,
         bold=False
     )
 
-    subtitle = fa(
+    subtitle = (
         "برنامه مسابقات فوتبال امروز"
     )
 
-    box = draw.textbbox(
-        (0, 0),
-        subtitle,
-        font=subtitle_font
-    )
-
-    subtitle_w = (
-        box[2] - box[0]
-    )
-
-    draw.text(
+    draw_rtl(
+        draw,
         (
-            WIDTH - MARGIN - subtitle_w,
+            WIDTH - MARGIN,
             190
         ),
         subtitle,
-        font=subtitle_font,
-        fill=(148, 155, 180)
+        subtitle_font,
+        (148, 155, 180),
+        anchor="ra"
     )
 
-    # --------------------------------------------------------
     # تاریخ
-    # --------------------------------------------------------
-
     date_font = get_font(
         27,
         bold=True
@@ -1248,21 +1350,18 @@ def create_poster(matches):
         )
     )
 
-    date_rendered = fa(
-        date_text
-    )
-
-    box = draw.textbbox(
-        (0, 0),
-        date_rendered,
-        font=date_font
+    date_box = text_bbox(
+        draw,
+        date_text,
+        date_font,
+        "rtl"
     )
 
     date_w = (
-        box[2] - box[0]
+        date_box[2]
+        - date_box[0]
     )
 
-    # کادر تاریخ
     date_box_w = max(
         290,
         date_w + 55
@@ -1281,20 +1380,19 @@ def create_poster(matches):
         width=1
     )
 
-    draw.text(
+    draw_rtl(
+        draw,
         (
             MARGIN + date_box_w - 25,
             161
         ),
-        date_rendered,
-        font=date_font,
-        fill=(235, 238, 246)
+        date_text,
+        date_font,
+        (235, 238, 246),
+        anchor="ra"
     )
 
-    # --------------------------------------------------------
-    # خط هدر
-    # --------------------------------------------------------
-
+    # خط
     draw.line(
         (
             MARGIN,
@@ -1306,46 +1404,37 @@ def create_poster(matches):
         width=2
     )
 
-    # --------------------------------------------------------
-    # تعداد بازی
-    # --------------------------------------------------------
-
+    # تعداد بازی‌ها
     count_font = get_font(
         24,
         bold=True
     )
 
-    count_text = fa(
-        f"{persian_digits(len(matches))} مسابقه امروز"
+    count_text = (
+        persian_digits(
+            len(matches)
+        )
+        + " مسابقه امروز"
     )
 
-    box = draw.textbbox(
-        (0, 0),
-        count_text,
-        font=count_font
-    )
-
-    count_w = (
-        box[2] - box[0]
-    )
-
-    draw.text(
+    draw_rtl(
+        draw,
         (
-            WIDTH - MARGIN - count_w,
+            WIDTH - MARGIN,
             325
         ),
         count_text,
-        font=count_font,
-        fill=(135, 143, 170)
+        count_font,
+        (135, 143, 170),
+        anchor="ra"
     )
 
-    # --------------------------------------------------------
     # کارت‌ها
-    # --------------------------------------------------------
-
     start_y = header_height
 
-    for i, match in enumerate(matches):
+    for i, match in enumerate(
+        matches
+    ):
 
         row = i // columns
         col = i % columns
@@ -1353,14 +1442,16 @@ def create_poster(matches):
         x = (
             MARGIN
             + col * (
-                card_width + GAP
+                card_width
+                + GAP
             )
         )
 
         y = (
             start_y
             + row * (
-                card_height + GAP
+                card_height
+                + GAP
             )
         )
 
@@ -1374,14 +1465,14 @@ def create_poster(matches):
             i + 1
         )
 
-    # --------------------------------------------------------
     # فوتر
-    # --------------------------------------------------------
-
     footer_y = (
         start_y
         + rows * card_height
-        + max(0, rows - 1) * GAP
+        + max(
+            0,
+            rows - 1
+        ) * GAP
         + 30
     )
 
@@ -1401,28 +1492,20 @@ def create_poster(matches):
         bold=False
     )
 
-    footer = fa(
+    footer = (
         "تمامی ساعت‌ها به وقت تهران"
     )
 
-    box = draw.textbbox(
-        (0, 0),
-        footer,
-        font=footer_font
-    )
-
-    footer_w = (
-        box[2] - box[0]
-    )
-
-    draw.text(
+    draw_rtl(
+        draw,
         (
-            WIDTH - MARGIN - footer_w,
+            WIDTH - MARGIN,
             footer_y + 30
         ),
         footer,
-        font=footer_font,
-        fill=(116, 124, 150)
+        footer_font,
+        (116, 124, 150),
+        anchor="ra"
     )
 
     # نقطه تزئینی
@@ -1436,10 +1519,7 @@ def create_poster(matches):
         fill=(126, 90, 245)
     )
 
-    # --------------------------------------------------------
     # خروجی JPEG
-    # --------------------------------------------------------
-
     output = io.BytesIO()
 
     image.convert(
@@ -1460,7 +1540,10 @@ def create_poster(matches):
 # ارسال تلگرام
 # ============================================================
 
-def send_photo(photo, caption):
+def send_photo(
+    photo,
+    caption
+):
 
     url = (
         f"https://api.telegram.org/bot"
@@ -1504,10 +1587,7 @@ def main():
     print("FOOTBALL DAILY BOT")
     print("=" * 60)
 
-    # --------------------------------------------------------
-    # بررسی Secret ها
-    # --------------------------------------------------------
-
+    # بررسی Secretها
     if not BOT_TOKEN:
         raise ValueError(
             "BOT_TOKEN is missing"
@@ -1531,10 +1611,7 @@ def main():
 
     all_matches = []
 
-    # --------------------------------------------------------
     # دریافت ۹ لیگ
-    # --------------------------------------------------------
-
     for code, league_name in COMPETITIONS.items():
 
         print(
@@ -1590,15 +1667,27 @@ def main():
                 "تیم مهمان"
             )
 
-            home_name = TEAM_NAMES.get(
-                home_original,
+            home_original = repair_text(
                 home_original
             )
 
-            away_name = TEAM_NAMES.get(
-                away_original,
+            away_original = repair_text(
                 away_original
             )
+
+            home_name = TEAM_NAMES.get(
+                home_original
+            )
+
+            if not home_name:
+                home_name = home_original
+
+            away_name = TEAM_NAMES.get(
+                away_original
+            )
+
+            if not away_name:
+                away_name = away_original
 
             home_logo_url = home_data.get(
                 "crest"
@@ -1608,35 +1697,26 @@ def main():
                 "crest"
             )
 
-            all_matches.append({
+            all_matches.append(
+                {
+                    "competition_code": code,
+                    "league_name": league_name,
+                    "home": home_name,
+                    "away": away_name,
+                    "home_logo": download_logo(
+                        home_logo_url
+                    ),
+                    "away_logo": download_logo(
+                        away_logo_url
+                    ),
+                    "time": match_time(
+                        utc
+                    ),
+                    "utc": utc
+                }
+            )
 
-                "competition_code": code,
-
-                "league_name": league_name,
-
-                "home": home_name,
-
-                "away": away_name,
-
-                "home_logo": download_logo(
-                    home_logo_url
-                ),
-
-                "away_logo": download_logo(
-                    away_logo_url
-                ),
-
-                "time": match_time(
-                    utc
-                ),
-
-                "utc": utc
-            })
-
-    # --------------------------------------------------------
-    # مرتب‌سازی بر اساس ساعت
-    # --------------------------------------------------------
-
+    # مرتب‌سازی بر اساس زمان
     all_matches.sort(
         key=lambda item: item["utc"]
     )
@@ -1645,10 +1725,7 @@ def main():
         f"TOTAL MATCHES: {len(all_matches)}"
     )
 
-    # --------------------------------------------------------
     # اگر بازی پیدا نشد
-    # --------------------------------------------------------
-
     if not all_matches:
 
         message = (
@@ -1680,10 +1757,7 @@ def main():
 
         return
 
-    # --------------------------------------------------------
     # ساخت پوستر
-    # --------------------------------------------------------
-
     print(
         "Creating poster..."
     )
@@ -1692,21 +1766,15 @@ def main():
         all_matches
     )
 
-    # --------------------------------------------------------
     # کپشن
-    # --------------------------------------------------------
-
     caption = (
         "⚽ بازی‌های امروز\n"
         f"📅 {format_date(today)}\n"
-        f"🏟️ {persian_digits(len(all_matches))} مسابقه\n"
-        "🕐 تمام ساعت‌ها به وقت تهران"
+        f"🎯 {persian_digits(len(all_matches))} مسابقه\n"
+        "🕐 تمامی ساعت‌ها به وقت تهران"
     )
 
-    # --------------------------------------------------------
     # ارسال
-    # --------------------------------------------------------
-
     send_photo(
         poster,
         caption
