@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
 # ============================================================
-# CONFIG
+# SETTINGS
 # ============================================================
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -25,7 +25,7 @@ API_URL = "https://api.football-data.org/v4/competitions/{}/matches"
 
 
 # ============================================================
-# 9 LEAGUES
+# LEAGUES
 # ============================================================
 
 COMPETITIONS = {
@@ -41,20 +41,16 @@ COMPETITIONS = {
 }
 
 
-# ============================================================
-# LEAGUE COLORS
-# ============================================================
-
 LEAGUE_COLORS = {
-    "PL": (125, 45, 190),
-    "PD": (225, 0, 60),
-    "SA": (0, 125, 220),
-    "BL1": (40, 48, 58),
-    "FL1": (15, 110, 205),
-    "DED": (245, 105, 0),
-    "PPL": (0, 155, 95),
-    "BSA": (0, 125, 75),
-    "CL": (50, 75, 210),
+    "PL": (126, 48, 190),
+    "PD": (225, 10, 62),
+    "SA": (10, 112, 215),
+    "BL1": (48, 55, 66),
+    "FL1": (25, 115, 205),
+    "DED": (244, 103, 5),
+    "PPL": (0, 150, 105),
+    "BSA": (0, 120, 80),
+    "CL": (65, 80, 210),
 }
 
 
@@ -195,12 +191,15 @@ TEAM_NAMES = {
 def get_font(size, bold=False):
 
     if bold:
+
         paths = [
             "/usr/share/fonts/truetype/noto/NotoSansArabic-Bold.ttf",
             "/usr/share/fonts/opentype/noto/NotoSansArabic-Bold.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         ]
+
     else:
+
         paths = [
             "/usr/share/fonts/truetype/noto/NotoSansArabic-Regular.ttf",
             "/usr/share/fonts/opentype/noto/NotoSansArabic-Regular.ttf",
@@ -216,7 +215,6 @@ def get_font(size, bold=False):
                     path,
                     size
                 )
-
             except Exception:
                 pass
 
@@ -224,12 +222,12 @@ def get_font(size, bold=False):
 
 
 # ============================================================
-# PERSIAN TEXT
+# PERSIAN DRAW
 # ============================================================
 
 def draw_fa(
     draw,
-    xy,
+    position,
     text,
     font,
     fill,
@@ -239,7 +237,7 @@ def draw_fa(
     try:
 
         draw.text(
-            xy,
+            position,
             str(text),
             font=font,
             fill=fill,
@@ -251,7 +249,7 @@ def draw_fa(
     except Exception:
 
         draw.text(
-            xy,
+            position,
             str(text),
             font=font,
             fill=fill,
@@ -260,85 +258,17 @@ def draw_fa(
 
 
 # ============================================================
-# PERSIAN DIGITS
+# PERSIAN NUMBERS
 # ============================================================
 
-def persian_digits(text):
+def persian_digits(value):
 
     table = str.maketrans(
         "0123456789",
         "۰۱۲۳۴۵۶۷۸۹"
     )
 
-    return str(text).translate(table)
-
-
-# ============================================================
-# FIT TEAM NAME
-# ============================================================
-
-def draw_team_name(
-    draw,
-    center,
-    text,
-    max_width,
-    max_size=34,
-    min_size=20
-):
-
-    for size in range(
-        max_size,
-        min_size - 1,
-        -1
-    ):
-
-        font = get_font(
-            size,
-            bold=True
-        )
-
-        try:
-
-            bbox = draw.textbbox(
-                (0, 0),
-                str(text),
-                font=font,
-                direction="rtl",
-                language="fa"
-            )
-
-        except Exception:
-
-            bbox = draw.textbbox(
-                (0, 0),
-                str(text),
-                font=font
-            )
-
-        width = bbox[2] - bbox[0]
-
-        if width <= max_width:
-
-            draw_fa(
-                draw,
-                center,
-                text,
-                font,
-                (15, 20, 28)
-            )
-
-            return
-
-    draw_fa(
-        draw,
-        center,
-        text,
-        get_font(
-            min_size,
-            bold=True
-        ),
-        (15, 20, 28)
-    )
+    return str(value).translate(table)
 
 
 # ============================================================
@@ -348,7 +278,7 @@ def draw_team_name(
 logo_cache = {}
 
 
-def download_logo(url):
+def get_logo(url):
 
     if not url:
         return None
@@ -364,12 +294,6 @@ def download_logo(url):
         )
 
         if response.status_code != 200:
-
-            print(
-                "Logo HTTP:",
-                response.status_code
-            )
-
             return None
 
         logo = Image.open(
@@ -379,7 +303,7 @@ def download_logo(url):
         ).convert("RGBA")
 
         logo.thumbnail(
-            (120, 120),
+            (150, 150),
             Image.Resampling.LANCZOS
         )
 
@@ -446,7 +370,7 @@ def get_today():
 
 
 # ============================================================
-# GET MATCHES
+# API
 # ============================================================
 
 def get_matches(
@@ -463,15 +387,14 @@ def get_matches(
         FOOTBALL_API_TOKEN
     }
 
-    date_from = (
-        today - timedelta(days=1)
-    ).isoformat()
-
-    date_to = today.isoformat()
-
     params = {
-        "dateFrom": date_from,
-        "dateTo": date_to
+        "dateFrom":
+        (
+            today - timedelta(days=1)
+        ).isoformat(),
+
+        "dateTo":
+        today.isoformat()
     }
 
     try:
@@ -485,15 +408,11 @@ def get_matches(
 
         print(
             competition,
-            "=>",
+            "HTTP:",
             response.status_code
         )
 
         if response.status_code == 429:
-
-            print(
-                "Rate limit. Waiting..."
-            )
 
             time.sleep(45)
 
@@ -519,7 +438,7 @@ def get_matches(
             []
         )
 
-        result = []
+        today_matches = []
 
         for match in matches:
 
@@ -539,22 +458,26 @@ def get_matches(
                     )
                 )
 
-                tehran_date = (
+                local_date = (
                     dt.astimezone(
                         TEHRAN
                     ).date()
                 )
 
-                if tehran_date == today:
+                if local_date == today:
 
-                    result.append(
+                    match[
+                        "league_code"
+                    ] = competition
+
+                    today_matches.append(
                         match
                     )
 
             except Exception:
                 continue
 
-        return result
+        return today_matches
 
     except Exception as e:
 
@@ -568,15 +491,52 @@ def get_matches(
 
 
 # ============================================================
-# DRAW LOGO
+# LOGO PLACEHOLDER
+# ============================================================
+
+def placeholder(
+    draw,
+    cx,
+    cy,
+    name
+):
+
+    draw.ellipse(
+        (
+            cx - 57,
+            cy - 57,
+            cx + 57,
+            cy + 57
+        ),
+        fill=(245, 248, 250),
+        outline=(220, 226, 232),
+        width=3
+    )
+
+    draw_fa(
+        draw,
+        (
+            cx,
+            cy
+        ),
+        str(name)[:1],
+        get_font(
+            38,
+            bold=True
+        ),
+        (30, 120, 90)
+    )
+
+
+# ============================================================
+# PASTE LOGO
 # ============================================================
 
 def paste_logo(
     image,
     logo,
     cx,
-    cy,
-    size=110
+    cy
 ):
 
     if logo is None:
@@ -585,7 +545,7 @@ def paste_logo(
     logo = logo.copy()
 
     logo.thumbnail(
-        (size, size),
+        (120, 120),
         Image.Resampling.LANCZOS
     )
 
@@ -599,56 +559,74 @@ def paste_logo(
 
     image.paste(
         logo,
-        (x, y),
+        (
+            x,
+            y
+        ),
         logo
     )
 
 
 # ============================================================
-# PLACEHOLDER LOGO
+# TEAM TEXT
 # ============================================================
 
-def draw_placeholder(
+def team_text(
     draw,
-    cx,
-    cy,
-    color,
-    text
+    center,
+    text,
+    max_width=280
 ):
 
-    radius = 48
+    for size in range(
+        39,
+        20,
+        -1
+    ):
 
-    draw.ellipse(
-        (
-            cx - radius,
-            cy - radius,
-            cx + radius,
-            cy + radius
-        ),
-        fill=(244, 247, 250),
-        outline=(220, 225, 230),
-        width=2
-    )
-
-    letter = str(text)[:1]
-
-    draw_fa(
-        draw,
-        (cx, cy),
-        letter,
-        get_font(
-            32,
+        font = get_font(
+            size,
             bold=True
-        ),
-        color
-    )
+        )
+
+        try:
+
+            box = draw.textbbox(
+                (0, 0),
+                str(text),
+                font=font,
+                direction="rtl",
+                language="fa"
+            )
+
+        except Exception:
+
+            box = draw.textbbox(
+                (0, 0),
+                str(text),
+                font=font
+            )
+
+        width = box[2] - box[0]
+
+        if width <= max_width:
+
+            draw_fa(
+                draw,
+                center,
+                text,
+                font,
+                (15, 21, 29)
+            )
+
+            return
 
 
 # ============================================================
-# DRAW MATCH CARD
+# MATCH CARD
 # ============================================================
 
-def draw_match_card(
+def match_card(
     image,
     draw,
     match,
@@ -688,12 +666,16 @@ def draw_match_card(
         away_original
     )
 
-    home_logo = download_logo(
-        home_data.get("crest")
+    home_logo = get_logo(
+        home_data.get(
+            "crest"
+        )
     )
 
-    away_logo = download_logo(
-        away_data.get("crest")
+    away_logo = get_logo(
+        away_data.get(
+            "crest"
+        )
     )
 
     # --------------------------------------------------------
@@ -706,23 +688,23 @@ def draw_match_card(
         (0, 0, 0, 0)
     )
 
-    shadow_draw = ImageDraw.Draw(
+    sd = ImageDraw.Draw(
         shadow
     )
 
-    shadow_draw.rounded_rectangle(
+    sd.rounded_rectangle(
         (
-            x + 8,
-            y + 10,
-            x + width + 8,
-            y + height + 10
+            x + 10,
+            y + 12,
+            x + width + 10,
+            y + height + 12
         ),
-        radius=28,
-        fill=(0, 0, 0, 100)
+        radius=32,
+        fill=(0, 0, 0, 110)
     )
 
     shadow = shadow.filter(
-        ImageFilter.GaussianBlur(8)
+        ImageFilter.GaussianBlur(12)
     )
 
     image.paste(
@@ -742,49 +724,51 @@ def draw_match_card(
             x + width,
             y + height
         ),
-        radius=28,
-        fill=(250, 252, 253),
-        outline=(220, 228, 235),
-        width=2
+        radius=32,
+        fill=(250, 252, 254),
+        outline=(220, 227, 234),
+        width=3
     )
 
-    # --------------------------------------------------------
-    # TOP LIGHT STRIPE
-    # --------------------------------------------------------
-
+    # top shine
     draw.rounded_rectangle(
         (
-            x + 25,
+            x + 35,
             y + 12,
-            x + width - 25,
-            y + 17
+            x + width - 35,
+            y + 18
         ),
-        radius=3,
-        fill=(235, 239, 243)
+        radius=4,
+        fill=(235, 240, 244)
     )
 
-    center_y = y + height // 2
+    center_y = (
+        y + height // 2
+    )
 
     # --------------------------------------------------------
     # LOGO POSITIONS
     # --------------------------------------------------------
 
-    home_x = x + width - 85
-    away_x = x + 85
+    home_x = x + width - 100
+    away_x = x + 100
 
-    # Logo circles
-    for logo_x in [home_x, away_x]:
+    # logo background
+    for logo_x in (
+        home_x,
+        away_x
+    ):
 
         draw.ellipse(
             (
-                logo_x - 61,
-                center_y - 61,
-                logo_x + 61,
-                center_y + 61
+                logo_x - 68,
+                center_y - 68,
+                logo_x + 68,
+                center_y + 68
             ),
             fill=(247, 249, 251),
-            outline=(230, 235, 240),
-            width=2
+            outline=(229, 234, 239),
+            width=3
         )
 
     # --------------------------------------------------------
@@ -797,17 +781,15 @@ def draw_match_card(
             image,
             home_logo,
             home_x,
-            center_y,
-            105
+            center_y
         )
 
     else:
 
-        draw_placeholder(
+        placeholder(
             draw,
             home_x,
             center_y,
-            (40, 130, 90),
             home
         )
 
@@ -817,17 +799,15 @@ def draw_match_card(
             image,
             away_logo,
             away_x,
-            center_y,
-            105
+            center_y
         )
 
     else:
 
-        draw_placeholder(
+        placeholder(
             draw,
             away_x,
             center_y,
-            (40, 130, 90),
             away
         )
 
@@ -835,55 +815,58 @@ def draw_match_card(
     # TEAM NAMES
     # --------------------------------------------------------
 
-    draw_team_name(
+    team_text(
         draw,
         (
-            x + width - 245,
+            x + width - 300,
             center_y
         ),
         home,
-        220,
-        max_size=34,
-        min_size=19
+        260
     )
 
-    draw_team_name(
+    team_text(
         draw,
         (
-            x + 245,
+            x + 300,
             center_y
         ),
         away,
-        220,
-        max_size=34,
-        min_size=19
+        260
     )
 
     # --------------------------------------------------------
-    # TIME PILL
+    # TIME BADGE SHADOW
     # --------------------------------------------------------
 
     cx = x + width // 2
 
-    pill_w = 135
-    pill_h = 65
+    draw.rounded_rectangle(
+        (
+            cx - 83,
+            center_y - 37,
+            cx + 83,
+            center_y + 37
+        ),
+        radius=23,
+        fill=(207, 217, 224)
+    )
+
+    # --------------------------------------------------------
+    # TIME BADGE
+    # --------------------------------------------------------
 
     draw.rounded_rectangle(
         (
-            cx - pill_w // 2,
-            center_y - pill_h // 2,
-            cx + pill_w // 2,
-            center_y + pill_h // 2
+            cx - 80,
+            center_y - 40,
+            cx + 80,
+            center_y + 40
         ),
-        radius=20,
+        radius=23,
         fill=(236, 250, 243),
-        outline=(35, 190, 120),
-        width=3
-    )
-
-    time_font = get_font(
-        34,
-        bold=True
+        outline=(40, 195, 125),
+        width=4
     )
 
     draw.text(
@@ -892,8 +875,11 @@ def draw_match_card(
             center_y
         ),
         get_match_time(match),
-        font=time_font,
-        fill=(13, 130, 82),
+        font=get_font(
+            39,
+            bold=True
+        ),
+        fill=(12, 132, 82),
         anchor="mm"
     )
 
@@ -904,23 +890,23 @@ def draw_match_card(
     draw.text(
         (
             cx,
-            center_y + 48
+            center_y + 58
         ),
         "VS",
         font=get_font(
-            15,
+            17,
             bold=True
         ),
-        fill=(155, 163, 172),
+        fill=(145, 153, 162),
         anchor="mm"
     )
 
 
 # ============================================================
-# DRAW LEAGUE BLOCK
+# LEAGUE BLOCK
 # ============================================================
 
-def draw_league(
+def league_block(
     image,
     draw,
     code,
@@ -932,17 +918,17 @@ def draw_league(
 
     color = LEAGUE_COLORS.get(
         code,
-        (50, 100, 170)
+        (40, 100, 170)
     )
 
-    league_name = COMPETITIONS.get(
+    league = COMPETITIONS.get(
         code,
         "مسابقات"
     )
 
-    header_h = 72
-    card_h = 150
-    gap = 18
+    HEADER = 82
+    CARD = 175
+    GAP = 22
 
     # --------------------------------------------------------
     # LEAGUE HEADER SHADOW
@@ -950,12 +936,12 @@ def draw_league(
 
     draw.rounded_rectangle(
         (
-            x + 5,
-            y + 6,
-            x + width + 5,
-            y + header_h + 6
+            x + 7,
+            y + 9,
+            x + width + 7,
+            y + HEADER + 9
         ),
-        radius=25,
+        radius=29,
         fill=(0, 0, 0)
     )
 
@@ -968,95 +954,93 @@ def draw_league(
             x,
             y,
             x + width,
-            y + header_h
+            y + HEADER
         ),
-        radius=25,
+        radius=29,
         fill=color
     )
 
-    # روشنایی بالای نوار
+    # upper highlight
     draw.rounded_rectangle(
         (
-            x + 25,
-            y + 8,
-            x + width - 25,
-            y + 13
+            x + 35,
+            y + 9,
+            x + width - 35,
+            y + 16
         ),
-        radius=3,
+        radius=4,
         fill=(
-            min(color[0] + 35, 255),
-            min(color[1] + 35, 255),
-            min(color[2] + 35, 255)
+            min(color[0] + 40, 255),
+            min(color[1] + 40, 255),
+            min(color[2] + 40, 255)
         )
     )
 
-    league_font = get_font(
-        31,
-        bold=True
-    )
-
+    # league title
     draw_fa(
         draw,
         (
             x + width // 2,
-            y + header_h // 2
+            y + HEADER // 2 + 2
         ),
-        league_name,
-        league_font,
+        league,
+        get_font(
+            36,
+            bold=True
+        ),
         (255, 255, 255)
     )
 
-    current_y = (
+    current = (
         y
-        + header_h
-        + gap
+        + HEADER
+        + GAP
     )
 
     for match in matches:
 
-        draw_match_card(
+        match_card(
             image,
             draw,
             match,
             x,
-            current_y,
+            current,
             width,
-            card_h
+            CARD
         )
 
-        current_y += (
-            card_h
-            + gap
+        current += (
+            CARD
+            + GAP
         )
 
-    return current_y - y
+    return current - y
 
 
 # ============================================================
-# CREATE PROFESSIONAL IMAGE
+# CREATE IMAGE
 # ============================================================
 
-def create_matches_image(
+def create_image(
     matches,
     today
 ):
 
-    # طراحی با رزولوشن بالا
-    WIDTH = 1800
+    WIDTH = 2000
 
-    SIDE = 55
-    GAP = 35
+    SIDE = 70
+    COLUMN_GAP = 45
 
     COLUMN_WIDTH = (
         WIDTH
-        - SIDE * 2
-        - GAP
+        - (SIDE * 2)
+        - COLUMN_GAP
     ) // 2
 
-    HEADER_HEIGHT = 365
+    HEADER_HEIGHT = 410
 
     # --------------------------------------------------------
-    # GROUP LEAGUES
+    # GROUP
     # --------------------------------------------------------
 
     grouped = {}
@@ -1073,25 +1057,15 @@ def create_matches_image(
             []
         ).append(match)
 
-    for code in grouped:
-
-        grouped[code].sort(
-            key=lambda x:
-            x.get(
-                "utcDate",
-                ""
-            )
-        )
-
     # --------------------------------------------------------
-    # BALANCE TWO COLUMNS
+    # BALANCE COLUMNS
     # --------------------------------------------------------
 
     left = []
     right = []
 
-    left_h = 0
-    right_h = 0
+    left_height = 0
+    right_height = 0
 
     for code in COMPETITIONS:
 
@@ -1103,14 +1077,14 @@ def create_matches_image(
         )
 
         estimated = (
-            72
-            + 18
+            82
+            + 22
             + count * (
-                150 + 18
+                175 + 22
             )
         )
 
-        if left_h <= right_h:
+        if left_height <= right_height:
 
             left.append(
                 (
@@ -1119,7 +1093,7 @@ def create_matches_image(
                 )
             )
 
-            left_h += estimated
+            left_height += estimated
 
         else:
 
@@ -1130,21 +1104,21 @@ def create_matches_image(
                 )
             )
 
-            right_h += estimated
+            right_height += estimated
 
-    content_h = max(
-        left_h,
-        right_h
+    content_height = max(
+        left_height,
+        right_height
     )
 
     HEIGHT = (
         HEADER_HEIGHT
-        + content_h
-        + 80
+        + content_height
+        + 110
     )
 
     # --------------------------------------------------------
-    # BACKGROUND
+    # BASE
     # --------------------------------------------------------
 
     image = Image.new(
@@ -1152,8 +1126,7 @@ def create_matches_image(
         (
             WIDTH,
             HEIGHT
-        ),
-        (5, 24, 43)
+        )
     )
 
     draw = ImageDraw.Draw(
@@ -1161,61 +1134,63 @@ def create_matches_image(
     )
 
     # --------------------------------------------------------
-    # GRADIENT BACKGROUND
+    # PREMIUM GRADIENT
     # --------------------------------------------------------
 
-    for yy in range(HEIGHT):
+    for y in range(
+        HEIGHT
+    ):
 
-        ratio = yy / max(
+        ratio = y / max(
             HEIGHT - 1,
             1
         )
 
         r = int(
-            5 + 7 * ratio
+            4 + ratio * 7
         )
 
         g = int(
-            25 + 30 * ratio
+            21 + ratio * 26
         )
 
         b = int(
-            45 + 25 * ratio
+            38 + ratio * 35
         )
 
         draw.line(
             (
                 0,
-                yy,
+                y,
                 WIDTH,
-                yy
+                y
             ),
             fill=(r, g, b)
         )
 
     # --------------------------------------------------------
-    # DECORATIVE LINES
+    # DIAGONAL SPORT LINES
     # --------------------------------------------------------
 
-    for xx in range(
-        -500,
-        WIDTH + 500,
-        130
+    for start in range(
+        -700,
+        WIDTH + 700,
+        145
     ):
 
         draw.line(
             (
-                xx,
+                start,
                 0,
-                xx + 250,
-                250
+                start + 320,
+                320
             ),
-            fill=(15, 52, 76),
+            fill=(14, 50, 73),
             width=3
         )
 
     # --------------------------------------------------------
-    # DECORATIVE GLOW CIRCLES
+    # DECORATIVE GREEN GLOW
     # --------------------------------------------------------
 
     glow = Image.new(
@@ -1224,32 +1199,32 @@ def create_matches_image(
         (0, 0, 0, 0)
     )
 
-    glow_draw = ImageDraw.Draw(
+    gd = ImageDraw.Draw(
         glow
     )
 
-    glow_draw.ellipse(
+    gd.ellipse(
         (
-            -300,
-            500,
-            300,
-            1100
+            -400,
+            250,
+            400,
+            1150
         ),
-        fill=(0, 180, 130, 30)
+        fill=(0, 220, 140, 38)
     )
 
-    glow_draw.ellipse(
+    gd.ellipse(
         (
-            WIDTH - 300,
-            700,
-            WIDTH + 250,
+            WIDTH - 400,
+            500,
+            WIDTH + 350,
             1250
         ),
-        fill=(20, 80, 220, 25)
+        fill=(30, 100, 240, 30)
     )
 
     glow = glow.filter(
-        ImageFilter.GaussianBlur(100)
+        ImageFilter.GaussianBlur(130)
     )
 
     image.paste(
@@ -1264,12 +1239,12 @@ def create_matches_image(
 
     draw.rounded_rectangle(
         (
-            38,
-            38,
-            WIDTH - 38,
+            48,
+            48,
+            WIDTH - 48,
             HEADER_HEIGHT - 20
         ),
-        radius=45,
+        radius=52,
         fill=(0, 0, 0)
     )
 
@@ -1279,15 +1254,15 @@ def create_matches_image(
 
     draw.rounded_rectangle(
         (
+            35,
             30,
-            25,
-            WIDTH - 30,
-            HEADER_HEIGHT - 30
+            WIDTH - 35,
+            HEADER_HEIGHT - 32
         ),
-        radius=45,
-        fill=(6, 24, 43),
-        outline=(35, 225, 130),
-        width=4
+        radius=52,
+        fill=(5, 23, 41),
+        outline=(38, 225, 135),
+        width=5
     )
 
     # --------------------------------------------------------
@@ -1296,82 +1271,80 @@ def create_matches_image(
 
     draw.rounded_rectangle(
         (
-            220,
-            25,
-            WIDTH - 220,
-            42
+            260,
+            30,
+            WIDTH - 260,
+            51
         ),
-        radius=8,
-        fill=(30, 225, 130)
+        radius=10,
+        fill=(35, 228, 135)
     )
 
     # --------------------------------------------------------
     # FOOTBALL ICON
     # --------------------------------------------------------
 
-    bx = 190
-    by = 145
+    bx = 185
+    by = 165
 
     draw.ellipse(
         (
-            bx - 65,
-            by - 65,
-            bx + 65,
-            by + 65
+            bx - 72,
+            by - 72,
+            bx + 72,
+            by + 72
         ),
-        fill=(250, 252, 253),
-        outline=(205, 215, 220),
-        width=3
+        fill=(248, 250, 252),
+        outline=(208, 216, 222),
+        width=4
     )
 
-    # توپ هندسی
+    # football center
     draw.polygon(
         [
-            (bx, by - 28),
-            (bx + 27, by - 8),
-            (bx + 17, by + 23),
-            (bx - 17, by + 23),
-            (bx - 27, by - 8)
+            (bx, by - 32),
+            (bx + 31, by - 10),
+            (bx + 19, by + 27),
+            (bx - 19, by + 27),
+            (bx - 31, by - 10)
         ],
-        fill=(20, 40, 55)
+        fill=(16, 35, 50)
     )
 
-    for ex, ey in [
-        (bx, by - 28),
-        (bx + 27, by - 8),
-        (bx + 17, by + 23),
-        (bx - 17, by + 23),
-        (bx - 27, by - 8)
+    for px, py in [
+        (bx, by - 32),
+        (bx + 31, by - 10),
+        (bx + 19, by + 27),
+        (bx - 19, by + 27),
+        (bx - 31, by - 10)
     ]:
 
         draw.line(
             (
                 bx,
                 by,
-                ex,
-                ey
+                px,
+                py
             ),
-            fill=(20, 40, 55),
-            width=4
+            fill=(16, 35, 50),
+            width=5
         )
 
     # --------------------------------------------------------
     # TITLE
     # --------------------------------------------------------
 
-    title_font = get_font(
-        70,
-        bold=True
-    )
-
     draw_fa(
         draw,
         (
-            WIDTH // 2 + 35,
-            105
+            WIDTH // 2 + 45,
+            120
         ),
         "بازی‌های امروز",
-        title_font,
+        get_font(
+            82,
+            bold=True
+        ),
         (255, 255, 255)
     )
 
@@ -1379,20 +1352,18 @@ def create_matches_image(
     # SUBTITLE
     # --------------------------------------------------------
 
-    subtitle_font = get_font(
-        40,
-        bold=True
-    )
-
     draw_fa(
         draw,
         (
-            WIDTH // 2 + 25,
-            185
+            WIDTH // 2 + 40,
+            215
         ),
         "۹ لیگ معتبر",
-        subtitle_font,
-        (30, 225, 130)
+        get_font(
+            45,
+            bold=True
+        ),
+        (35, 228, 135)
     )
 
     # --------------------------------------------------------
@@ -1402,15 +1373,15 @@ def create_matches_image(
     draw_fa(
         draw,
         (
-            WIDTH // 2 + 25,
-            245
+            WIDTH // 2 + 40,
+            285
         ),
         "زمان‌ها به وقت تهران",
         get_font(
-            31,
+            36,
             bold=True
         ),
-        (235, 242, 247)
+        (235, 243, 248)
     )
 
     # --------------------------------------------------------
@@ -1419,14 +1390,14 @@ def create_matches_image(
 
     draw.text(
         (
-            WIDTH // 2 + 25,
-            295
+            WIDTH // 2 + 40,
+            340
         ),
         today.isoformat(),
         font=get_font(
-            25
+            27
         ),
-        fill=(145, 170, 185),
+        fill=(150, 174, 188),
         anchor="mm"
     )
 
@@ -1434,22 +1405,18 @@ def create_matches_image(
     # MATCH COUNT
     # --------------------------------------------------------
 
-    count_text = (
-        f"{persian_digits(len(matches))} بازی امروز"
-    )
-
     draw_fa(
         draw,
         (
-            WIDTH - 170,
-            295
+            WIDTH - 190,
+            340
         ),
-        count_text,
+        f"{persian_digits(len(matches))} بازی",
         get_font(
-            23,
+            27,
             bold=True
         ),
-        (30, 225, 130)
+        (35, 228, 135)
     )
 
     # --------------------------------------------------------
@@ -1461,16 +1428,15 @@ def create_matches_image(
     right_x = (
         SIDE
         + COLUMN_WIDTH
-        + GAP
+        + COLUMN_GAP
     )
 
     left_y = HEADER_HEIGHT
-
     right_y = HEADER_HEIGHT
 
     for code, league_matches in left:
 
-        h = draw_league(
+        h = league_block(
             image,
             draw,
             code,
@@ -1484,7 +1450,7 @@ def create_matches_image(
 
     for code, league_matches in right:
 
-        h = draw_league(
+        h = league_block(
             image,
             draw,
             code,
@@ -1500,7 +1466,7 @@ def create_matches_image(
     # FOOTER
     # --------------------------------------------------------
 
-    footer_y = HEIGHT - 35
+    footer_y = HEIGHT - 45
 
     draw.line(
         (
@@ -1509,40 +1475,54 @@ def create_matches_image(
             WIDTH - 170,
             footer_y
         ),
-        fill=(30, 225, 130),
-        width=4
+        fill=(35, 228, 135),
+        width=5
+    )
+
+    draw_fa(
+        draw,
+        (
+            WIDTH // 2,
+            footer_y + 28
+        ),
+        "Football Alert",
+        get_font(
+            20,
+            bold=True
+        ),
+        (125, 150, 165)
     )
 
     return image
 
 
 # ============================================================
-# SEND IMAGE
+# TELEGRAM IMAGE
 # ============================================================
 
-def send_matches_image(
+def send_image(
     matches,
     today
 ):
 
     try:
 
-        image = create_matches_image(
+        image = create_image(
             matches,
             today
         )
 
-        output = BytesIO()
+        buffer = BytesIO()
 
         image.save(
-            output,
+            buffer,
             format="JPEG",
-            quality=96,
+            quality=97,
             optimize=True,
             subsampling=0
         )
 
-        output.seek(0)
+        buffer.seek(0)
 
         url = (
             "https://api.telegram.org/"
@@ -1564,7 +1544,7 @@ def send_matches_image(
             files={
                 "photo": (
                     "football_today.jpg",
-                    output,
+                    buffer,
                     "image/jpeg"
                 )
             },
@@ -1585,7 +1565,7 @@ def send_matches_image(
     except Exception as e:
 
         print(
-            "IMAGE SEND ERROR:",
+            "SEND IMAGE ERROR:",
             e
         )
 
@@ -1593,10 +1573,10 @@ def send_matches_image(
 
 
 # ============================================================
-# SEND TEXT
+# TEXT FALLBACK
 # ============================================================
 
-def send_message(text):
+def send_text(text):
 
     try:
 
@@ -1619,10 +1599,6 @@ def send_message(text):
             response.status_code
         )
 
-        print(
-            response.text
-        )
-
         return response.ok
 
     except Exception as e:
@@ -1642,32 +1618,24 @@ def send_message(text):
 def main():
 
     print(
-        "=========================================="
+        "========================================"
     )
 
     print(
-        "FOOTBALL ALERT BOT - PROFESSIONAL DESIGN"
+        "FOOTBALL ALERT - PREMIUM GRAPHICS"
     )
 
     print(
-        "=========================================="
+        "========================================"
     )
-
-    # --------------------------------------------------------
-    # CHECK SECRETS
-    # --------------------------------------------------------
 
     missing = []
 
     if not BOT_TOKEN:
-        missing.append(
-            "BOT_TOKEN"
-        )
+        missing.append("BOT_TOKEN")
 
     if not CHAT_ID:
-        missing.append(
-            "CHAT_ID"
-        )
+        missing.append("CHAT_ID")
 
     if not FOOTBALL_API_TOKEN:
         missing.append(
@@ -1677,15 +1645,11 @@ def main():
     if missing:
 
         print(
-            "Missing secrets:",
+            "Missing:",
             missing
         )
 
         return
-
-    # --------------------------------------------------------
-    # TODAY
-    # --------------------------------------------------------
 
     today = get_today()
 
@@ -1697,45 +1661,34 @@ def main():
     all_matches = []
 
     # --------------------------------------------------------
-    # CHECK 9 LEAGUES
+    # FETCH 9 LEAGUES
     # --------------------------------------------------------
 
-    for competition in COMPETITIONS:
-
-        print(
-            "Checking:",
-            competition
-        )
+    for code in COMPETITIONS:
 
         matches = get_matches(
-            competition,
+            code,
             today
         )
 
-        for match in matches:
-
-            match[
-                "league_code"
-            ] = competition
-
-            all_matches.append(
-                match
-            )
+        all_matches.extend(
+            matches
+        )
 
     # --------------------------------------------------------
-    # SORT
+    # SORT BY TIME
     # --------------------------------------------------------
 
     all_matches.sort(
-        key=lambda m:
-        m.get(
+        key=lambda x:
+        x.get(
             "utcDate",
             ""
         )
     )
 
     print(
-        "TOTAL MATCHES:",
+        "TOTAL:",
         len(all_matches)
     )
 
@@ -1745,7 +1698,7 @@ def main():
 
     if not all_matches:
 
-        send_message(
+        send_text(
             "⚽ بازی‌ای برای امروز پیدا نشد.\n"
             f"📅 {today.isoformat()}"
         )
@@ -1753,43 +1706,27 @@ def main():
         return
 
     # --------------------------------------------------------
-    # SEND ONE PROFESSIONAL IMAGE
+    # SEND ONE IMAGE
     # --------------------------------------------------------
 
-    success = send_matches_image(
+    if send_image(
         all_matches,
         today
-    )
-
-    if success:
+    ):
 
         print(
-            "=========================================="
-        )
-
-        print(
-            "SUCCESS - IMAGE SENT"
-        )
-
-        print(
-            "=========================================="
+            "IMAGE SENT SUCCESSFULLY"
         )
 
     else:
 
         print(
-            "Image failed."
-        )
-
-        send_message(
-            "⚽ بازی‌های امروز\n"
-            f"📅 {today.isoformat()}\n"
-            f"تعداد بازی‌ها: {len(all_matches)}"
+            "IMAGE SEND FAILED"
         )
 
 
 # ============================================================
-# START
+# RUN
 # ============================================================
 
 if __name__ == "__main__":
