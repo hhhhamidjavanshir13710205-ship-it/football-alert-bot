@@ -6,7 +6,19 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 FOOTBALL_API_TOKEN = os.getenv("FOOTBALL_API_TOKEN")
 
-API_URL = "https://api.football-data.org/v4/competitions/PL/matches"
+API_URL = "https://api.football-data.org/v4/competitions/{}/matches"
+
+COMPETITIONS = {
+    "PL": "🏴 Premier League",
+    "PD": "🇪🇸 La Liga",
+    "SA": "🇮🇹 Serie A",
+    "BL1": "🇩🇪 Bundesliga",
+    "FL1": "🇫🇷 Ligue 1",
+    "DED": "🇳🇱 Eredivisie",
+    "PPL": "🇵🇹 Primeira Liga",
+    "BSA": "🇧🇷 Brasileirão Série A",
+    "CL": "🏆 Champions League",
+}
 
 
 def send_message(text):
@@ -25,48 +37,109 @@ def send_message(text):
     print(response.text)
 
 
-def test_football_api():
+def get_today():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def get_matches(competition, date):
+    url = API_URL.format(competition)
+
     headers = {
         "X-Auth-Token": FOOTBALL_API_TOKEN
     }
 
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-
     response = requests.get(
-        API_URL,
+        url,
         headers=headers,
         params={
-            "dateFrom": today,
-            "dateTo": today
+            "dateFrom": date,
+            "dateTo": date
         },
         timeout=30
     )
 
-    print("Football API status:", response.status_code)
-    print("Football API response:", response.text[:2000])
+    print(
+        competition,
+        "API:",
+        response.status_code
+    )
 
-    response.raise_for_status()
+    if response.status_code != 200:
+        print(response.text[:500])
+        return []
 
     data = response.json()
 
-    matches = data.get("matches", [])
+    return data.get("matches", [])
 
-    if matches:
-        message = (
-            "⚽ تست API فوتبال موفق بود!\n\n"
-            f"📅 تاریخ: {today}\n"
-            f"🏆 Premier League\n"
-            f"تعداد بازی امروز: {len(matches)}"
+
+def main():
+
+    date = get_today()
+
+    print("================================")
+    print("FOOTBALL ALERT BOT")
+    print("DATE:", date)
+    print("================================")
+
+    all_matches = []
+
+    for competition, league_name in COMPETITIONS.items():
+
+        print(
+            "Checking:",
+            league_name
         )
-    else:
-        message = (
-            "⚽ اتصال به API فوتبال موفق بود!\n\n"
-            f"📅 تاریخ: {today}\n"
-            "امروز در Premier League بازی پیدا نشد."
+
+        matches = get_matches(
+            competition,
+            date
+        )
+
+        for match in matches:
+            match["league_name"] = league_name
+            all_matches.append(match)
+
+    print(
+        "TOTAL MATCHES:",
+        len(all_matches)
+    )
+
+    if not all_matches:
+        send_message(
+            f"⚽ بازی‌ای برای امروز پیدا نشد.\n\n"
+            f"📅 تاریخ: {date}"
+        )
+        return
+
+    message = (
+        f"⚽ بازی‌های امروز\n"
+        f"📅 تاریخ: {date}\n\n"
+    )
+
+    for match in all_matches:
+
+        league = match["league_name"]
+
+        home = match["homeTeam"]["name"]
+        away = match["awayTeam"]["name"]
+
+        utc_date = match["utcDate"]
+
+        dt = datetime.fromisoformat(
+            utc_date.replace("Z", "+00:00")
+        )
+
+        time_text = dt.strftime("%H:%M")
+
+        message += (
+            f"{league}\n"
+            f"⚽ {home} - {away}\n"
+            f"🕐 {time_text}\n\n"
         )
 
     send_message(message)
 
 
 if __name__ == "__main__":
-    test_football_api()
+    main()
