@@ -644,3 +644,352 @@ def send_match_card(
     # --------------------------------------------------------
 
     utc
+    utc_date = match.get(
+        "utcDate"
+    )
+
+    if not utc_date:
+        time_text = "--:--"
+    else:
+        try:
+            dt = datetime.fromisoformat(
+                utc_date.replace(
+                    "Z",
+                    "+00:00"
+                )
+            )
+
+            iran_timezone = ZoneInfo(
+                "Asia/Tehran"
+            )
+
+            iran_time = dt.astimezone(
+                iran_timezone
+            )
+
+            time_text = iran_time.strftime(
+                "%H:%M"
+            )
+
+        except Exception as e:
+            print(
+                "Time conversion error:",
+                e
+            )
+
+            time_text = "--:--"
+
+    # --------------------------------------------------------
+    # DOWNLOAD LOGOS
+    # --------------------------------------------------------
+
+    home_logo = download_logo(
+        home_crest
+    )
+
+    away_logo = download_logo(
+        away_crest
+    )
+
+    # --------------------------------------------------------
+    # IF BOTH LOGOS EXIST
+    # --------------------------------------------------------
+
+    if home_logo and away_logo:
+
+        try:
+
+            card = create_match_card(
+                home=home,
+                away=away,
+                home_logo=home_logo,
+                away_logo=away_logo,
+                time_text=time_text,
+                league=league
+            )
+
+            url = (
+                f"https://api.telegram.org/"
+                f"bot{BOT_TOKEN}/sendPhoto"
+            )
+
+            response = requests.post(
+                url,
+                data={
+                    "chat_id": CHAT_ID
+                },
+                files={
+                    "photo": (
+                        "match.png",
+                        card,
+                        "image/png"
+                    )
+                },
+                timeout=30
+            )
+
+            print(
+                "Telegram card:",
+                home,
+                "vs",
+                away,
+                response.status_code
+            )
+
+            print(response.text)
+
+            if response.ok:
+                return True
+
+        except Exception as e:
+
+            print(
+                "Card creation/send error:",
+                e
+            )
+
+    # --------------------------------------------------------
+    # FALLBACK TEXT
+    # --------------------------------------------------------
+
+    fallback = (
+        f"{league}\n"
+        f"⚽ {flag} {home} - {flag} {away}\n"
+        f"🕐 {time_text}"
+    )
+
+    return send_message(
+        fallback
+    )
+
+
+# ============================================================
+# GET TODAY
+# ============================================================
+
+def get_today():
+
+    return datetime.now(
+        ZoneInfo("Asia/Tehran")
+    ).strftime(
+        "%Y-%m-%d"
+    )
+
+
+# ============================================================
+# GET MATCHES
+# ============================================================
+
+def get_matches(
+    competition,
+    date
+):
+
+    url = API_URL.format(
+        competition
+    )
+
+    headers = {
+        "X-Auth-Token":
+        FOOTBALL_API_TOKEN
+    }
+
+    params = {
+        "dateFrom": date,
+        "dateTo": date
+    }
+
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params,
+        timeout=30
+    )
+
+    print(
+        competition,
+        "API:",
+        response.status_code
+    )
+
+    # --------------------------------------------------------
+    # RATE LIMIT
+    # --------------------------------------------------------
+
+    if response.status_code == 429:
+
+        print(
+            "Rate limit reached."
+        )
+
+        print(
+            "Waiting 45 seconds..."
+        )
+
+        time.sleep(45)
+
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+            timeout=30
+        )
+
+        print(
+            competition,
+            "API after waiting:",
+            response.status_code
+        )
+
+    # --------------------------------------------------------
+    # ERROR
+    # --------------------------------------------------------
+
+    if response.status_code != 200:
+
+        print(
+            response.text[:500]
+        )
+
+        return []
+
+    # --------------------------------------------------------
+    # JSON
+    # --------------------------------------------------------
+
+    data = response.json()
+
+    return data.get(
+        "matches",
+        []
+    )
+
+
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+
+    date = get_today()
+
+    print(
+        "================================"
+    )
+
+    print(
+        "FOOTBALL ALERT BOT"
+    )
+
+    print(
+        "IRAN DATE:",
+        date
+    )
+
+    print(
+        "================================"
+    )
+
+    all_matches = []
+
+    # --------------------------------------------------------
+    # GET ALL LEAGUES
+    # --------------------------------------------------------
+
+    for competition, league_name in COMPETITIONS.items():
+
+        print(
+            "Checking:",
+            league_name
+        )
+
+        matches = get_matches(
+            competition,
+            date
+        )
+
+        for match in matches:
+
+            match["league_code"] = (
+                competition
+            )
+
+            match["league_name"] = (
+                league_name
+            )
+
+            all_matches.append(
+                match
+            )
+
+    # --------------------------------------------------------
+    # TOTAL
+    # --------------------------------------------------------
+
+    print(
+        "TOTAL MATCHES:",
+        len(all_matches)
+    )
+
+    # --------------------------------------------------------
+    # NO MATCHES
+    # --------------------------------------------------------
+
+    if not all_matches:
+
+        send_message(
+            f"⚽ بازی‌ای برای امروز پیدا نشد.\n\n"
+            f"📅 تاریخ: {date}"
+        )
+
+        return
+
+    # --------------------------------------------------------
+    # HEADER
+    # --------------------------------------------------------
+
+    header = (
+        f"⚽ بازی‌های امروز\n"
+        f"📅 تاریخ: {date}\n\n"
+        f"🛡️ مسابقات ۹ لیگ منتخب"
+    )
+
+    send_message(
+        header
+    )
+
+    # --------------------------------------------------------
+    # SEND MATCH CARDS
+    # --------------------------------------------------------
+
+    for match in all_matches:
+
+        competition = match[
+            "league_code"
+        ]
+
+        league = match[
+            "league_name"
+        ]
+
+        flag = COUNTRY_FLAGS.get(
+            competition,
+            "⚽"
+        )
+
+        send_match_card(
+            match,
+            league,
+            flag
+        )
+
+        time.sleep(1)
+
+
+# ============================================================
+# START
+# ============================================================
+
+if __name__ == "__main__":
+
+    main()
