@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import requests
 import jdatetime
@@ -6,36 +8,27 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
-# =========================================================
+# ============================================================
 # تنظیمات
-# =========================================================
+# ============================================================
 
-BOT_TOKEN = os.getenv(
-    "BOT_TOKEN",
-    "YOUR_TELEGRAM_BOT_TOKEN"
-)
-
-CHAT_ID = os.getenv(
-    "CHAT_ID",
-    "YOUR_CHAT_ID"
-)
-
+BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID", "YOUR_CHAT_ID")
 FOOTBALL_API_TOKEN = os.getenv(
     "FOOTBALL_API_TOKEN",
     "YOUR_FOOTBALL_DATA_API_TOKEN"
 )
 
 API_BASE = "https://api.football-data.org/v4"
-
 TEHRAN_TZ = ZoneInfo("Asia/Tehran")
 
 
-# =========================================================
+# ============================================================
 # لیگ‌ها
-# =========================================================
+# فقط ۶ لیگ
+# ============================================================
 
 COMPETITIONS = {
-
     "PL": {
         "name": "لیگ برتر انگلیس",
         "flag": "🏴"
@@ -61,21 +54,6 @@ COMPETITIONS = {
         "flag": "🇫🇷"
     },
 
-    "DED": {
-        "name": "اردیویسه",
-        "flag": "🇳🇱"
-    },
-
-    "PPL": {
-        "name": "لیگ پرتغال",
-        "flag": "🇵🇹"
-    },
-
-    "BSA": {
-        "name": "سری آ برزیل",
-        "flag": "🇧🇷"
-    },
-
     "CL": {
         "name": "لیگ قهرمانان اروپا",
         "flag": "🇪🇺"
@@ -83,15 +61,15 @@ COMPETITIONS = {
 }
 
 
-# =========================================================
+# ============================================================
 # نام فارسی تیم‌ها
-# =========================================================
+# ============================================================
 
 TEAM_NAMES = {
 
-    # =====================================================
-    # ENGLAND
-    # =====================================================
+    # ========================================================
+    # England
+    # ========================================================
 
     "Chelsea FC": "چلسی",
     "Brentford FC": "برنتفورد",
@@ -112,22 +90,17 @@ TEAM_NAMES = {
     "AFC Bournemouth": "بورنموث",
     "Leicester City FC": "لسترسیتی",
     "Southampton FC": "ساوتهمپتون",
-    "Ipswich Town FC": "ایپسویچ",
     "Ipswich Town": "ایپسویچ",
     "Hull City AFC": "هال سیتی",
-    "Hull City": "هال سیتی",
     "Coventry City FC": "کاونتری سیتی",
-    "Coventry City": "کاونتری سیتی",
 
-    # =====================================================
-    # SPAIN
-    # =====================================================
+    # ========================================================
+    # Spain
+    # ========================================================
 
     "FC Barcelona": "بارسلونا",
     "Real Madrid CF": "رئال مادرید",
-    "Real Madrid": "رئال مادرید",
     "Atletico Madrid": "اتلتیکومادرید",
-    "Club Atlético de Madrid": "اتلتیکومادرید",
     "Athletic Club": "اتلتیک بیلبائو",
     "Real Sociedad de Fútbol": "رئال سوسیداد",
     "Sevilla FC": "سویا",
@@ -146,15 +119,13 @@ TEAM_NAMES = {
     "RCD Espanyol de Barcelona": "اسپانیول",
     "Elche CF": "الچه",
     "Real Racing Club de Santander": "راسینگ سانتاندر",
-    "Racing Santander": "راسینگ سانتاندر",
 
-    # =====================================================
-    # ITALY
-    # =====================================================
+    # ========================================================
+    # Italy
+    # ========================================================
 
     "FC Internazionale Milano": "اینتر",
     "Inter Milan": "اینتر",
-    "Inter": "اینتر",
     "AC Milan": "میلان",
     "Juventus FC": "یوونتوس",
     "SSC Napoli": "ناپولی",
@@ -163,7 +134,6 @@ TEAM_NAMES = {
     "Atalanta BC": "آتالانتا",
     "ACF Fiorentina": "فیورنتینا",
     "Bologna FC 1909": "بولونیا",
-    "Bologna": "بولونیا",
     "Torino FC": "تورینو",
     "Genoa CFC": "جنوا",
     "Udinese Calcio": "اودینزه",
@@ -176,24 +146,20 @@ TEAM_NAMES = {
     "AC Monza": "مونتزا",
     "US Sassuolo Calcio": "ساسولو",
     "Venezia FC": "ونیزیا",
-    "Venezia": "ونیزیا",
 
-    # =====================================================
-    # GERMANY
-    # =====================================================
+    # ========================================================
+    # Germany
+    # ========================================================
 
     "FC Bayern München": "بایرن مونیخ",
     "FC Bayern Munich": "بایرن مونیخ",
-    "Bayern Munich": "بایرن مونیخ",
     "Borussia Dortmund": "بوروسیا دورتموند",
     "RB Leipzig": "لایپزیگ",
     "Bayer 04 Leverkusen": "بایرلورکوزن",
-    "Bayer Leverkusen": "بایرلورکوزن",
     "Eintracht Frankfurt": "آینتراخت فرانکفورت",
     "VfB Stuttgart": "اشتوتگارت",
     "SC Freiburg": "فرایبورگ",
     "1. FSV Mainz 05": "ماینتس",
-    "Mainz 05": "ماینتس",
     "Borussia Mönchengladbach": "مونشن‌گلادباخ",
     "TSG 1899 Hoffenheim": "هوفنهایم",
     "VfL Wolfsburg": "ولفسبورگ",
@@ -204,16 +170,13 @@ TEAM_NAMES = {
     "FC St. Pauli 1910": "سن پائولی",
     "Holstein Kiel": "هولشتاین کیل",
     "Hamburger SV": "هامبورگ",
-    "Hamburger SV II": "هامبورگ",
     "1. FC Köln": "کلن",
-    "FC Cologne": "کلن",
 
-    # =====================================================
-    # FRANCE
-    # =====================================================
+    # ========================================================
+    # France
+    # ========================================================
 
     "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
-    "Paris Saint-Germain": "پاری‌سن‌ژرمن",
     "Olympique de Marseille": "مارسی",
     "AS Monaco FC": "موناکو",
     "Olympique Lyonnais": "لیون",
@@ -222,7 +185,6 @@ TEAM_NAMES = {
     "Stade Rennais FC": "رن",
     "Stade Rennais FC 1901": "رن",
     "RC Strasbourg Alsace": "استراسبورگ",
-    "RC Strasbourg": "استراسبورگ",
     "RC Lens": "لانس",
     "FC Nantes": "نانت",
     "Montpellier HSC": "مون‌پلیه",
@@ -237,209 +199,72 @@ TEAM_NAMES = {
     "FC Lorient": "لوریان",
     "ES Troyes AC": "تروا",
 
-    # =====================================================
-    # NETHERLANDS
-    # =====================================================
+    # ========================================================
+    # Champions League
+    # ========================================================
 
+    "Galatasaray SK": "گالاتاسرای",
+    "Fenerbahçe SK": "فنرباغچه",
+    "Olympiacos FC": "المپیاکوس",
+    "SL Benfica": "بنفیکا",
+    "FC Porto": "پورتو",
+    "Sporting CP": "اسپورتینگ",
+    "Sporting Clube de Portugal": "اسپورتینگ",
     "Ajax": "آژاکس",
     "AFC Ajax": "آژاکس",
     "PSV": "پی‌اس‌وی",
-    "PSV Eindhoven": "پی‌اس‌وی",
     "Feyenoord Rotterdam": "فاینورد",
-    "Feyenoord": "فاینورد",
-    "FC Utrecht": "اوترخت",
-    "AZ": "آلکمار",
-    "AZ Alkmaar": "آلکمار",
-    "FC Twente '65": "تونته",
-    "FC Twente": "تونته",
-    "Go Ahead Eagles": "گو اهد ایگلز",
-    "FC Groningen": "خرونینگن",
-    "PEC Zwolle": "زووله",
-    "SC Heerenveen": "هیرنفین",
-    "N.E.C.": "نایمخن",
-    "NEC Nijmegen": "نایمخن",
-    "Sparta Rotterdam": "اسپارتا روتردام",
-    "Sparta Rotterdam": "اسپارتا روتردام",
-    "ADO Den Haag": "آدو دن هاخ",
-    "ADO Den Haag FC": "آدو دن هاخ",
-    "SC Cambuur-Leeuwarden": "کامبور",
-    "SC Cambuur": "کامبور",
-    "SBV Excelsior": "اکسلسیور",
-    "Excelsior": "اکسلسیور",
-    "Willem II Tilburg": "ویلم دوم",
-    "Willem II": "ویلم دوم",
-    "Fortuna Sittard": "فورتونا سیتارد",
-
-    # =====================================================
-    # PORTUGAL
-    # =====================================================
-
-    "SL Benfica": "بنفیکا",
-    "Benfica": "بنفیکا",
-    "FC Porto": "پورتو",
-    "Porto": "پورتو",
-    "Sporting CP": "اسپورتینگ",
-    "Sporting Clube de Portugal": "اسپورتینگ",
-    "Sporting Portugal": "اسپورتینگ",
-    "SC Braga": "براگا",
-    "Braga": "براگا",
-    "CD Nacional": "ناسیونال",
-    "Nacional": "ناسیونال",
-    "FC Famalicão": "فامالیکائو",
-    "Famalicao": "فامالیکائو",
-    "Gil Vicente FC": "ژیل ویسنته",
-    "Gil Vicente": "ژیل ویسنته",
-    "CS Marítimo": "ماریتیمو",
-    "Maritimo": "ماریتیمو",
-    "FC Alverca": "آلورکا",
-    "Alverca": "آلورکا",
-    "Rio Ave FC": "ریو آوه",
-    "Rio Ave": "ریو آوه",
-    "FC Arouca": "آروکا",
-    "Arouca": "آروکا",
-
-    # =====================================================
-    # BRAZIL
-    # =====================================================
-
-    "CR Flamengo": "فلامنگو",
-    "Flamengo": "فلامنگو",
-    "SE Palmeiras": "پالمیراس",
-    "Palmeiras": "پالمیراس",
-    "Santos FC": "سانتوس",
-    "Santos": "سانتوس",
-    "São Paulo FC": "سائوپائولو",
-    "Sao Paulo": "سائوپائولو",
-    "SC Corinthians Paulista": "کورینتیانس",
-    "Corinthians": "کورینتیانس",
-    "Fluminense FC": "فلومیننزه",
-    "Fluminense": "فلومیننزه",
-    "Botafogo FR": "بوتافوگو",
-    "Botafogo": "بوتافوگو",
-    "CR Vasco da Gama": "واسکو دوگاما",
-    "Vasco da Gama": "واسکو دوگاما",
-    "Grêmio FBPA": "گرمیو",
-    "Gremio": "گرمیو",
-    "SC Internacional": "اینترناسیونال",
-    "Internacional": "اینترناسیونال",
-    "Cruzeiro EC": "کروزیرو",
-    "Cruzeiro": "کروزیرو",
-    "EC Bahia": "باهیا",
-    "Bahia": "باهیا",
-    "Fortaleza EC": "فورتالزا",
-    "Fortaleza": "فورتالزا",
-    "Athletico Paranaense": "اتلتیکو پارانائنزه",
-    "Athletico-PR": "اتلتیکو پارانائنزه",
-    "RB Bragantino": "ردبول براگانتیـنو",
-    "Bragantino": "براگانتیـنو",
-    "Cuiabá EC": "کویابا",
-    "Cuiaba": "کویابا",
-    "Atlético Mineiro": "اتلتیکو مینیرو",
-    "Atletico Mineiro": "اتلتیکو مینیرو",
-    "Vitoria SC": "وینتوریا",
-    "Vitória": "وینتوریا",
-
-    # =====================================================
-    # CHAMPIONS LEAGUE / EUROPE
-    # =====================================================
-
-    "Manchester City": "منچسترسیتی",
-    "Manchester United": "منچستریونایتد",
-    "Liverpool": "لیورپول",
-    "Arsenal": "آرسنال",
-    "Chelsea": "چلسی",
-    "Tottenham": "تاتنهام",
-    "Newcastle United": "نیوکاسل",
-    "Aston Villa": "استون ویلا",
-    "Real Madrid": "رئال مادرید",
-    "Barcelona": "بارسلونا",
-    "Atletico Madrid": "اتلتیکومادرید",
-    "Bayern Munich": "بایرن مونیخ",
-    "Borussia Dortmund": "بوروسیا دورتموند",
-    "Bayer Leverkusen": "بایرلورکوزن",
     "Inter Milan": "اینتر",
     "AC Milan": "میلان",
-    "Juventus": "یوونتوس",
-    "Napoli": "ناپولی",
-    "Paris Saint-Germain": "پاری‌سن‌ژرمن",
-    "Benfica": "بنفیکا",
-    "Porto": "پورتو",
-    "Sporting CP": "اسپورتینگ",
-    "Ajax": "آژاکس",
-    "PSV Eindhoven": "پی‌اس‌وی",
-    "Feyenoord": "فاینورد",
+    "Juventus FC": "یوونتوس",
+    "FC Internazionale Milano": "اینتر",
+    "Real Madrid CF": "رئال مادرید",
+    "FC Barcelona": "بارسلونا",
+    "Manchester City FC": "منچسترسیتی",
+    "Manchester United FC": "منچستریونایتد",
+    "Arsenal FC": "آرسنال",
+    "Liverpool FC": "لیورپول",
+    "Bayern München": "بایرن مونیخ",
+    "FC Bayern München": "بایرن مونیخ",
+    "Borussia Dortmund": "بوروسیا دورتموند",
+    "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
+    "AS Monaco FC": "موناکو",
+    "Atletico Madrid": "اتلتیکومادرید",
+    "Bayer 04 Leverkusen": "بایرلورکوزن",
     "RB Leipzig": "لایپزیگ",
-    "Atalanta": "آتالانتا",
-    "Monaco": "موناکو",
-    "Marseille": "مارسی",
-    "Club Brugge": "کلوب بروژ",
-    "Shakhtar Donetsk": "شاختار دونتسک",
-    "Galatasaray": "گالاتاسرای",
-    "Fenerbahçe": "فنرباغچه",
-    "Fenerbahce": "فنرباغچه",
-    "PSV": "پی‌اس‌وی",
-    "Celtic": "سلتیک",
-    "Rangers": "رنجرز",
-    "Red Bull Salzburg": "ردبول سالزبورگ",
-    "Salzburg": "سالزبورگ",
-    "Dinamo Zagreb": "دینامو زاگرب",
-    "Young Boys": "یانگ بویز",
-    "Benfica": "بنفیکا",
-    "Olympiacos": "المپیاکوس",
-    "Olympiacos FC": "المپیاکوس",
-    "Club Brugge KV": "کلوب بروژ",
-    "PSV Eindhoven": "پی‌اس‌وی",
-    "Slavia Praha": "اسلاویا پراگ",
-    "Sparta Praha": "اسپارتا پراگ",
-    "Bologna FC 1909": "بولونیا",
-    "Girona FC": "ژیرونا",
-    "Lille OSC": "لیل",
-    "Stuttgart": "اشتوتگارت",
-    "Monaco": "موناکو",
 }
 
 
-# =========================================================
+# ============================================================
 # تبدیل نام تیم
-# =========================================================
+# ============================================================
 
 def get_team_name(name):
 
     if not name:
         return "نامشخص"
 
-    # حذف فاصله‌های اضافی
     name = " ".join(str(name).split())
 
-    # ابتدا تطبیق مستقیم
     if name in TEAM_NAMES:
         return TEAM_NAMES[name]
 
-    # تطبیق بدون حساسیت به حروف
     name_lower = name.lower()
 
     for original, persian in TEAM_NAMES.items():
-
         if original.lower() == name_lower:
             return persian
 
-    # اگر نام پیدا نشد، فعلاً همان نام API برگردد
-    # تا اسم ناشناخته مشخص شود
     return name
 
 
-# =========================================================
-# استایل اسم تیم
-# =========================================================
-
 def style_team_name(name):
-
     return get_team_name(name)
 
 
-# =========================================================
-# تاریخ شمسی ایران
-# =========================================================
+# ============================================================
+# تاریخ شمسی
+# ============================================================
 
 def get_persian_date():
 
@@ -471,9 +296,9 @@ def get_persian_date():
     )
 
 
-# =========================================================
-# تاریخ میلادی برای API
-# =========================================================
+# ============================================================
+# تاریخ API
+# ============================================================
 
 def get_api_date():
 
@@ -482,9 +307,9 @@ def get_api_date():
     return now.strftime("%Y-%m-%d")
 
 
-# =========================================================
-# دریافت بازی‌های یک لیگ
-# =========================================================
+# ============================================================
+# دریافت بازی‌ها
+# ============================================================
 
 def fetch_matches(
     competition_code,
@@ -519,7 +344,8 @@ def fetch_matches(
         if response.status_code != 200:
 
             print(
-                f"خطا در لیگ {competition_code}: "
+                f"خطا در لیگ "
+                f"{competition_code}: "
                 f"{response.status_code}"
             )
 
@@ -542,9 +368,9 @@ def fetch_matches(
         return []
 
 
-# =========================================================
+# ============================================================
 # جمع‌آوری بازی‌ها
-# =========================================================
+# ============================================================
 
 def collect_matches():
 
@@ -553,6 +379,11 @@ def collect_matches():
     all_matches = []
 
     for code in COMPETITIONS:
+
+        print(
+            f"در حال بررسی "
+            f"{COMPETITIONS[code]['name']}..."
+        )
 
         matches = fetch_matches(
             code,
@@ -583,9 +414,9 @@ def collect_matches():
     return all_matches
 
 
-# =========================================================
-# ساعت تهران
-# =========================================================
+# ============================================================
+# تبدیل ساعت به تهران
+# ============================================================
 
 def get_match_time(match):
 
@@ -618,9 +449,20 @@ def get_match_time(match):
         return "--:--"
 
 
-# =========================================================
+# ============================================================
+# طراحی ساعت جدید
+# ============================================================
+
+def format_match_time(match):
+
+    time = get_match_time(match)
+
+    return f"⏰ <b>{time}</b>"
+
+
+# ============================================================
 # ساخت پیام
-# =========================================================
+# ============================================================
 
 def build_message(matches):
 
@@ -635,18 +477,17 @@ def build_message(matches):
         if code not in grouped:
             grouped[code] = []
 
-        grouped[code].append(
-            match
-        )
+        grouped[code].append(match)
+
 
     lines = []
 
-    # =====================================================
-    # عنوان
-    # =====================================================
+    # --------------------------------------------------------
+    # هدر
+    # --------------------------------------------------------
 
     lines.append(
-        "🏆 <b>بازی‌های امروز</b>"
+        "⚽ <b>بازی‌های امروز</b>"
     )
 
     lines.append(
@@ -655,9 +496,10 @@ def build_message(matches):
 
     lines.append("")
 
-    # =====================================================
+
+    # --------------------------------------------------------
     # لیگ‌ها
-    # =====================================================
+    # --------------------------------------------------------
 
     for code, competition in COMPETITIONS.items():
 
@@ -669,7 +511,6 @@ def build_message(matches):
         if not league_matches:
             continue
 
-        # مرتب‌سازی بر اساس زمان
         league_matches.sort(
             key=lambda x: x.get(
                 "utcDate",
@@ -677,12 +518,22 @@ def build_message(matches):
             )
         )
 
+
+        # عنوان لیگ
+
         lines.append(
             f'{competition["flag"]} '
-            f'<b>━━━ {competition["name"]} ━━━</b>'
+            f'<b>{competition["name"]}</b>'
         )
 
-        lines.append("")
+        lines.append(
+            "━━━━━━━━━━━━━━"
+        )
+
+
+        # ----------------------------------------------------
+        # بازی‌ها
+        # ----------------------------------------------------
 
         for match in league_matches:
 
@@ -702,6 +553,7 @@ def build_message(matches):
                 "نامشخص"
             )
 
+
             home = style_team_name(
                 home_team
             )
@@ -710,19 +562,30 @@ def build_message(matches):
                 away_team
             )
 
-            time = get_match_time(
-                match
+
+            # بازی
+
+            lines.append(
+                f"🏟️ <b>{home}</b>"
             )
 
             lines.append(
-                f"🏟️ <b>{home}</b>  🆚  <b>{away}</b>"
+                f"       🆚"
             )
 
             lines.append(
-                f"🕐 {time}"
+                f"🏟️ <b>{away}</b>"
+            )
+
+
+            # ساعت با طراحی جدید
+
+            lines.append(
+                f"      {format_match_time(match)}"
             )
 
             lines.append("")
+
 
         lines.append(
             "━━━━━━━━━━━━━━━━"
@@ -730,16 +593,19 @@ def build_message(matches):
 
         lines.append("")
 
-    # حذف خطوط خالی انتهایی
+
+    # حذف خطوط خالی آخر
+
     while lines and not lines[-1].strip():
         lines.pop()
+
 
     return "\n".join(lines)
 
 
-# =========================================================
+# ============================================================
 # ارسال به تلگرام
-# =========================================================
+# ============================================================
 
 def send_message(message):
 
@@ -772,6 +638,7 @@ def send_message(message):
 
             return False
 
+
         result = response.json()
 
         if not result.get("ok"):
@@ -783,11 +650,13 @@ def send_message(message):
 
             return False
 
+
         print(
             "✅ پیام با موفقیت ارسال شد."
         )
 
         return True
+
 
     except requests.RequestException as e:
 
@@ -799,9 +668,9 @@ def send_message(message):
         return False
 
 
-# =========================================================
+# ============================================================
 # اجرای اصلی
-# =========================================================
+# ============================================================
 
 def main():
 
@@ -811,12 +680,14 @@ def main():
 
     matches = collect_matches()
 
+
     if not matches:
 
         message = (
-            "🏆 <b>بازی‌های امروز</b>\n"
+            "⚽ <b>بازی‌های امروز</b>\n"
             f"📅 {get_persian_date()} 🇮🇷\n\n"
-            "❌ بازی‌ای برای امروز پیدا نشد."
+            "❌ بازی‌ای برای امروز "
+            "در ۶ لیگ پیدا نشد."
         )
 
     else:
@@ -825,14 +696,20 @@ def main():
             matches
         )
 
+
     print()
     print(message)
     print()
+
 
     send_message(
         message
     )
 
+
+# ============================================================
+# START
+# ============================================================
 
 if __name__ == "__main__":
     main()
