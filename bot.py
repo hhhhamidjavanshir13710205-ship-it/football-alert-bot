@@ -20,14 +20,11 @@ FOOTBALL_API_TOKEN = os.getenv(
 )
 
 API_BASE = "https://api.football-data.org/v4"
-
-# ساعت تهران
 TEHRAN_TZ = ZoneInfo("Asia/Tehran")
 
 
 # ============================================================
 # لیگ‌ها
-# فقط ۶ لیگ
 # ============================================================
 
 COMPETITIONS = {
@@ -35,27 +32,22 @@ COMPETITIONS = {
         "name": "لیگ برتر انگلیس",
         "flag": "🏴"
     },
-
     "PD": {
         "name": "لالیگا",
         "flag": "🇪🇸"
     },
-
     "SA": {
         "name": "سری آ",
         "flag": "🇮🇹"
     },
-
     "BL1": {
         "name": "بوندسلیگا",
         "flag": "🇩🇪"
     },
-
     "FL1": {
         "name": "لیگ ۱ فرانسه",
         "flag": "🇫🇷"
     },
-
     "CL": {
         "name": "لیگ قهرمانان اروپا",
         "flag": "🇪🇺"
@@ -69,9 +61,9 @@ COMPETITIONS = {
 
 TEAM_NAMES = {
 
-    # ========================================================
-    # ENGLAND - PREMIER LEAGUE
-    # ========================================================
+    # --------------------------------------------------------
+    # England
+    # --------------------------------------------------------
 
     "Chelsea FC": "چلسی",
     "Brentford FC": "برنتفورد",
@@ -97,9 +89,9 @@ TEAM_NAMES = {
     "Hull City AFC": "هال سیتی",
     "Coventry City FC": "کاونتری سیتی",
 
-    # ========================================================
-    # SPAIN - LA LIGA
-    # ========================================================
+    # --------------------------------------------------------
+    # Spain
+    # --------------------------------------------------------
 
     "FC Barcelona": "بارسلونا",
     "Real Madrid CF": "رئال مادرید",
@@ -124,9 +116,9 @@ TEAM_NAMES = {
     "Elche CF": "الچه",
     "Real Racing Club de Santander": "راسینگ سانتاندر",
 
-    # ========================================================
-    # ITALY - SERIE A
-    # ========================================================
+    # --------------------------------------------------------
+    # Italy
+    # --------------------------------------------------------
 
     "FC Internazionale Milano": "اینتر",
     "Inter Milan": "اینتر",
@@ -192,9 +184,9 @@ TEAM_NAMES = {
     "Venezia FC": "ونیزیا",
     "Venezia": "ونیزیا",
 
-    # ========================================================
-    # GERMANY - BUNDESLIGA
-    # ========================================================
+    # --------------------------------------------------------
+    # Germany
+    # --------------------------------------------------------
 
     "FC Bayern München": "بایرن مونیخ",
     "FC Bayern Munich": "بایرن مونیخ",
@@ -247,12 +239,13 @@ TEAM_NAMES = {
 
     "Holstein Kiel": "هولشتاین کیل",
     "Hamburger SV": "هامبورگ",
+
     "1. FC Köln": "کلن",
     "FC Köln": "کلن",
 
-    # ========================================================
-    # FRANCE - LIGUE 1
-    # ========================================================
+    # --------------------------------------------------------
+    # France
+    # --------------------------------------------------------
 
     "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
     "Paris Saint-Germain": "پاری‌سن‌ژرمن",
@@ -316,9 +309,9 @@ TEAM_NAMES = {
     "FC Lorient": "لوریان",
     "ES Troyes AC": "تروا",
 
-    # ========================================================
-    # CHAMPIONS LEAGUE
-    # ========================================================
+    # --------------------------------------------------------
+    # Champions League
+    # --------------------------------------------------------
 
     "Galatasaray SK": "گالاتاسرای",
     "Galatasaray": "گالاتاسرای",
@@ -360,20 +353,13 @@ TEAM_NAMES = {
     "Rangers FC": "رنجرز",
     "Rangers": "رنجرز",
 
-    "PSV Eindhoven": "پی‌اس‌وی",
-    "Feyenoord": "فاینورد",
-
     "Red Bull Salzburg": "سالزبورگ",
-    "FC Salzburg": "سالزبورگ",
-
-    "Bologna FC 1909": "بولونیا",
-    "Bayer 04 Leverkusen": "بایرلورکوزن",
-    "RB Leipzig": "لایپزیگ",
+    "FC Salzburg": "سالزبورگ"
 }
 
 
 # ============================================================
-# تبدیل نام تیم به فارسی
+# تبدیل نام تیم
 # ============================================================
 
 def get_team_name(name):
@@ -381,26 +367,18 @@ def get_team_name(name):
     if not name:
         return "نامشخص"
 
-    # حذف فاصله‌های اضافی
     name = " ".join(str(name).split())
 
-    # تطبیق مستقیم
     if name in TEAM_NAMES:
         return TEAM_NAMES[name]
 
-    # تطبیق بدون حساسیت به حروف
     name_lower = name.lower()
 
     for original, persian in TEAM_NAMES.items():
-
         if original.lower() == name_lower:
             return persian
 
     return name
-
-
-def style_team_name(name):
-    return get_team_name(name)
 
 
 # ============================================================
@@ -485,8 +463,7 @@ def fetch_matches(
         if response.status_code != 200:
 
             print(
-                f"خطا در لیگ "
-                f"{competition_code}: "
+                f"خطا در لیگ {competition_code}: "
                 f"{response.status_code}"
             )
 
@@ -510,7 +487,7 @@ def fetch_matches(
 
 
 # ============================================================
-# جمع‌آوری همه بازی‌ها
+# جمع‌آوری تمام بازی‌ها
 # ============================================================
 
 def collect_matches():
@@ -539,7 +516,6 @@ def collect_matches():
                 ""
             )
 
-            # بازی‌های لغوشده یا تعویق‌افتاده حذف شوند
             if status in [
                 "CANCELLED",
                 "POSTPONED",
@@ -547,9 +523,7 @@ def collect_matches():
             ]:
                 continue
 
-            match[
-                "_competition_code"
-            ] = code
+            match["_competition_code"] = code
 
             all_matches.append(match)
 
@@ -557,7 +531,7 @@ def collect_matches():
 
 
 # ============================================================
-# تبدیل ساعت UTC به ساعت تهران
+# تبدیل زمان UTC به تهران
 # ============================================================
 
 def get_match_time(match):
@@ -592,14 +566,29 @@ def get_match_time(match):
 
 
 # ============================================================
-# ساخت پیام تلگرام
+# ساخت عنوان لیگ وسط کادر
+# ============================================================
+
+def make_league_header(
+    flag,
+    league_name
+):
+
+    return (
+        f"━━━━━━━━ {flag} "
+        f"<b>{league_name}</b> "
+        f"{flag} ━━━━━━━━"
+    )
+
+
+# ============================================================
+# ساخت پیام نهایی
 # ============================================================
 
 def build_message(matches):
 
     grouped = {}
 
-    # گروه‌بندی بازی‌ها بر اساس لیگ
     for match in matches:
 
         code = match[
@@ -609,15 +598,13 @@ def build_message(matches):
         if code not in grouped:
             grouped[code] = []
 
-        grouped[code].append(match)
-
+        grouped[code].append(
+            match
+        )
 
     lines = []
 
-    # ========================================================
-    # هدر
-    # ========================================================
-
+    # عنوان اصلی
     lines.append(
         "⚽ <b>بازی‌های امروز</b>"
     )
@@ -628,11 +615,7 @@ def build_message(matches):
 
     lines.append("")
 
-
-    # ========================================================
-    # نمایش لیگ‌ها
-    # ========================================================
-
+    # لیگ‌ها
     for code, competition in COMPETITIONS.items():
 
         league_matches = grouped.get(
@@ -640,13 +623,10 @@ def build_message(matches):
             []
         )
 
-        # اگر این لیگ امروز بازی ندارد
-        # اصلاً نمایش داده نشود
         if not league_matches:
             continue
 
-
-        # مرتب‌سازی بر اساس ساعت بازی
+        # مرتب‌سازی بر اساس زمان
         league_matches.sort(
             key=lambda x: x.get(
                 "utcDate",
@@ -654,65 +634,50 @@ def build_message(matches):
             )
         )
 
-
-        # ====================================================
-        # عنوان لیگ
-        # ====================================================
-
+        # عنوان لیگ وسط کادر
         lines.append(
-            f'{competition["flag"]} '
-            f'<b>{competition["name"]}</b>'
-        )
-
-        lines.append(
-            "━━━━━━━━━━━━━━"
+            make_league_header(
+                competition["flag"],
+                competition["name"]
+            )
         )
 
         lines.append("")
 
-
-        # ====================================================
         # بازی‌ها
-        # ====================================================
-
         for match in league_matches:
 
-            home_team = match.get(
-                "homeTeam",
-                {}
-            ).get(
-                "name",
-                "نامشخص"
+            home_team = (
+                match.get(
+                    "homeTeam",
+                    {}
+                ).get(
+                    "name",
+                    "نامشخص"
+                )
             )
 
-            away_team = match.get(
-                "awayTeam",
-                {}
-            ).get(
-                "name",
-                "نامشخص"
+            away_team = (
+                match.get(
+                    "awayTeam",
+                    {}
+                ).get(
+                    "name",
+                    "نامشخص"
+                )
             )
 
-
-            home = style_team_name(
+            home = get_team_name(
                 home_team
             )
 
-            away = style_team_name(
+            away = get_team_name(
                 away_team
             )
-
 
             match_time = get_match_time(
                 match
             )
-
-
-            # =================================================
-            # طرح نهایی
-            #
-            # تیم      ساعت      تیم
-            # =================================================
 
             lines.append(
                 f"🏟️ <b>{home}</b>"
@@ -722,21 +687,19 @@ def build_message(matches):
 
             lines.append("")
 
-
+        # خط پایان لیگ
         lines.append(
             "━━━━━━━━━━━━━━━━"
         )
 
         lines.append("")
 
-
-    # ========================================================
-    # حذف خطوط خالی انتهای پیام
-    # ========================================================
-
-    while lines and not lines[-1].strip():
+    # حذف خطوط خالی انتهایی
+    while (
+        lines
+        and not lines[-1].strip()
+    ):
         lines.pop()
-
 
     return "\n".join(lines)
 
@@ -748,7 +711,7 @@ def build_message(matches):
 def send_message(message):
 
     url = (
-        f"https://api.telegram.org/"
+        "https://api.telegram.org/"
         f"bot{BOT_TOKEN}/sendMessage"
     )
 
@@ -776,7 +739,6 @@ def send_message(message):
 
             return False
 
-
         result = response.json()
 
         if not result.get("ok"):
@@ -788,13 +750,11 @@ def send_message(message):
 
             return False
 
-
         print(
             "✅ پیام با موفقیت ارسال شد."
         )
 
         return True
-
 
     except requests.RequestException as e:
 
@@ -813,15 +773,11 @@ def send_message(message):
 def main():
 
     print(
-        "⏳ در حال دریافت بازی‌های امروز..."
+        "⏳ در حال دریافت "
+        "بازی‌های امروز..."
     )
 
     matches = collect_matches()
-
-
-    # ========================================================
-    # اگر بازی وجود نداشت
-    # ========================================================
 
     if not matches:
 
@@ -838,23 +794,15 @@ def main():
             matches
         )
 
-
-    # نمایش در لاگ GitHub Actions
-
     print()
     print(message)
     print()
 
-
-    # ارسال به تلگرام
-
-    send_message(
-        message
-    )
+    send_message(message)
 
 
 # ============================================================
-# START
+# شروع برنامه
 # ============================================================
 
 if __name__ == "__main__":
