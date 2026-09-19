@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 import requests
 import jdatetime
 
@@ -21,6 +22,8 @@ FOOTBALL_API_TOKEN = os.getenv(
 
 API_BASE = "https://api.football-data.org/v4"
 TEHRAN_TZ = ZoneInfo("Asia/Tehran")
+
+STATE_FILE = "bot_state.json"
 
 
 # ============================================================
@@ -61,10 +64,7 @@ COMPETITIONS = {
 
 TEAM_NAMES = {
 
-    # --------------------------------------------------------
     # England
-    # --------------------------------------------------------
-
     "Chelsea FC": "چلسی",
     "Brentford FC": "برنتفورد",
     "Arsenal FC": "آرسنال",
@@ -89,10 +89,7 @@ TEAM_NAMES = {
     "Hull City AFC": "هال سیتی",
     "Coventry City FC": "کاونتری سیتی",
 
-    # --------------------------------------------------------
     # Spain
-    # --------------------------------------------------------
-
     "FC Barcelona": "بارسلونا",
     "Real Madrid CF": "رئال مادرید",
     "Atletico Madrid": "اتلتیکومادرید",
@@ -116,243 +113,164 @@ TEAM_NAMES = {
     "Elche CF": "الچه",
     "Real Racing Club de Santander": "راسینگ سانتاندر",
 
-    # --------------------------------------------------------
     # Italy
-    # --------------------------------------------------------
-
     "FC Internazionale Milano": "اینتر",
     "Inter Milan": "اینتر",
     "Inter": "اینتر",
-
     "AC Milan": "میلان",
     "Milan": "میلان",
-
     "Juventus FC": "یوونتوس",
     "Juventus": "یوونتوس",
-
     "SSC Napoli": "ناپولی",
     "Napoli": "ناپولی",
-
     "AS Roma": "رم",
     "Roma": "رم",
-
     "SS Lazio": "لاتزیو",
     "Lazio": "لاتزیو",
-
     "Atalanta BC": "آتالانتا",
     "Atalanta": "آتالانتا",
-
     "ACF Fiorentina": "فیورنتینا",
     "Fiorentina": "فیورنتینا",
-
     "Bologna FC 1909": "بولونیا",
     "Bologna": "بولونیا",
-
     "Torino FC": "تورینو",
     "Torino": "تورینو",
-
     "Genoa CFC": "جنوا",
     "Genoa": "جنوا",
-
     "Udinese Calcio": "اودینزه",
     "Udinese": "اودینزه",
-
     "Cagliari Calcio": "کالیاری",
     "Cagliari": "کالیاری",
-
     "Empoli FC": "امپولی",
     "Empoli": "امپولی",
-
     "Hellas Verona FC": "هلاس ورونا",
     "Hellas Verona": "هلاس ورونا",
-
     "US Lecce": "لچه",
     "Lecce": "لچه",
-
     "Parma Calcio 1913": "پارما",
     "Parma": "پارما",
-
     "Como 1907": "کومو",
     "Como": "کومو",
-
     "AC Monza": "مونتزا",
     "Monza": "مونتزا",
-
     "US Sassuolo Calcio": "ساسولو",
     "Sassuolo": "ساسولو",
-
     "Venezia FC": "ونیزیا",
     "Venezia": "ونیزیا",
 
-    # --------------------------------------------------------
     # Germany
-    # --------------------------------------------------------
-
     "FC Bayern München": "بایرن مونیخ",
     "FC Bayern Munich": "بایرن مونیخ",
     "Bayern München": "بایرن مونیخ",
     "Bayern Munich": "بایرن مونیخ",
-
     "Borussia Dortmund": "بوروسیا دورتموند",
     "Dortmund": "بوروسیا دورتموند",
-
     "RB Leipzig": "لایپزیگ",
     "Leipzig": "لایپزیگ",
-
     "Bayer 04 Leverkusen": "بایرلورکوزن",
     "Bayer Leverkusen": "بایرلورکوزن",
-
     "Eintracht Frankfurt": "آینتراخت فرانکفورت",
-
     "VfB Stuttgart": "اشتوتگارت",
     "Stuttgart": "اشتوتگارت",
-
     "SC Freiburg": "فرایبورگ",
     "Freiburg": "فرایبورگ",
-
     "1. FSV Mainz 05": "ماینتس",
     "Mainz 05": "ماینتس",
-
     "Borussia Mönchengladbach": "مونشن‌گلادباخ",
     "Borussia Monchengladbach": "مونشن‌گلادباخ",
-
     "TSG 1899 Hoffenheim": "هوفنهایم",
     "Hoffenheim": "هوفنهایم",
-
     "VfL Wolfsburg": "ولفسبورگ",
     "Wolfsburg": "ولفسبورگ",
-
     "SV Werder Bremen": "وردربرمن",
     "Werder Bremen": "وردربرمن",
-
     "FC Augsburg": "آگزبورگ",
     "Augsburg": "آگزبورگ",
-
     "1. FC Union Berlin": "یونیون برلین",
     "Union Berlin": "یونیون برلین",
-
     "1. FC Heidenheim 1846": "هایدنهایم",
     "Heidenheim": "هایدنهایم",
-
     "FC St. Pauli 1910": "سن پائولی",
     "St. Pauli": "سن پائولی",
-
     "Holstein Kiel": "هولشتاین کیل",
     "Hamburger SV": "هامبورگ",
-
     "1. FC Köln": "کلن",
     "FC Köln": "کلن",
 
-    # --------------------------------------------------------
     # France
-    # --------------------------------------------------------
-
     "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
     "Paris Saint-Germain": "پاری‌سن‌ژرمن",
     "PSG": "پاری‌سن‌ژرمن",
-
     "Olympique de Marseille": "مارسی",
     "Olympique Marseille": "مارسی",
     "Marseille": "مارسی",
-
     "AS Monaco FC": "موناکو",
     "AS Monaco": "موناکو",
     "Monaco": "موناکو",
-
     "Olympique Lyonnais": "لیون",
     "Olympique Lyon": "لیون",
     "Lyon": "لیون",
-
     "Lille OSC": "لیل",
     "Lille": "لیل",
-
     "OGC Nice": "نیس",
     "Nice": "نیس",
-
     "Stade Rennais FC": "رن",
     "Stade Rennais FC 1901": "رن",
     "Stade Rennais": "رن",
     "Rennes": "رن",
-
     "RC Strasbourg Alsace": "استراسبورگ",
     "Strasbourg": "استراسبورگ",
-
     "RC Lens": "لانس",
     "Lens": "لانس",
-
     "FC Nantes": "نانت",
     "Nantes": "نانت",
-
     "Montpellier HSC": "مون‌پلیه",
     "Montpellier": "مون‌پلیه",
-
     "Toulouse FC": "تولوز",
     "Toulouse": "تولوز",
-
     "Stade Brestois 29": "برست",
     "Brest": "برست",
-
     "Le Havre AC": "لو آور",
     "Le Havre": "لو آور",
-
     "AJ Auxerre": "اوسر",
     "Auxerre": "اوسر",
-
     "AS Saint-Étienne": "سن‌اتین",
     "Saint-Étienne": "سن‌اتین",
-
     "Angers SCO": "آنژه",
     "Angers": "آنژه",
-
     "Paris FC": "پاریس اف‌سی",
     "Le Mans FC": "لو مان",
     "FC Lorient": "لوریان",
     "ES Troyes AC": "تروا",
 
-    # --------------------------------------------------------
     # Champions League
-    # --------------------------------------------------------
-
     "Galatasaray SK": "گالاتاسرای",
     "Galatasaray": "گالاتاسرای",
-
     "Fenerbahçe SK": "فنرباغچه",
     "Fenerbahce": "فنرباغچه",
-
     "Olympiacos FC": "المپیاکوس",
     "Olympiacos": "المپیاکوس",
-
     "SL Benfica": "بنفیکا",
     "Benfica": "بنفیکا",
-
     "FC Porto": "پورتو",
     "Porto": "پورتو",
-
     "Sporting CP": "اسپورتینگ",
     "Sporting Clube de Portugal": "اسپورتینگ",
     "Sporting CP Lisbon": "اسپورتینگ",
-
     "Ajax": "آژاکس",
     "AFC Ajax": "آژاکس",
-
     "PSV": "پی‌اس‌وی",
     "PSV Eindhoven": "پی‌اس‌وی",
-
     "Feyenoord Rotterdam": "فاینورد",
     "Feyenoord": "فاینورد",
-
     "Shakhtar Donetsk": "شاختار دونتسک",
     "FC Shakhtar Donetsk": "شاختار دونتسک",
-
     "Club Brugge KV": "کلوب بروژ",
     "Club Brugge": "کلوب بروژ",
-
     "Celtic FC": "سلتیک",
     "Celtic": "سلتیک",
-
     "Rangers FC": "رنجرز",
     "Rangers": "رنجرز",
-
     "Red Bull Salzburg": "سالزبورگ",
     "FC Salzburg": "سالزبورگ"
 }
@@ -416,14 +334,14 @@ def get_persian_date():
 
 
 # ============================================================
-# تاریخ میلادی برای API
+# تاریخ API
 # ============================================================
 
 def get_api_date():
 
-    now = datetime.now(TEHRAN_TZ)
-
-    return now.strftime("%Y-%m-%d")
+    return datetime.now(
+        TEHRAN_TZ
+    ).strftime("%Y-%m-%d")
 
 
 # ============================================================
@@ -487,7 +405,7 @@ def fetch_matches(
 
 
 # ============================================================
-# جمع‌آوری تمام بازی‌ها
+# دریافت تمام بازی‌های امروز
 # ============================================================
 
 def collect_matches():
@@ -517,9 +435,7 @@ def collect_matches():
             )
 
             if status in [
-                "CANCELLED",
-                "POSTPONED",
-                "SUSPENDED"
+                "CANCELLED"
             ]:
                 continue
 
@@ -531,7 +447,7 @@ def collect_matches():
 
 
 # ============================================================
-# تبدیل زمان UTC به تهران
+# زمان تهران
 # ============================================================
 
 def get_match_time(match):
@@ -566,7 +482,7 @@ def get_match_time(match):
 
 
 # ============================================================
-# ساخت عنوان لیگ وسط کادر
+# عنوان لیگ
 # ============================================================
 
 def make_league_header(
@@ -582,7 +498,7 @@ def make_league_header(
 
 
 # ============================================================
-# ساخت پیام نهایی
+# ساخت پیام بازی‌های امروز
 # ============================================================
 
 def build_message(matches):
@@ -604,7 +520,6 @@ def build_message(matches):
 
     lines = []
 
-    # عنوان اصلی
     lines.append(
         "⚽ <b>بازی‌های امروز</b>"
     )
@@ -615,7 +530,6 @@ def build_message(matches):
 
     lines.append("")
 
-    # لیگ‌ها
     for code, competition in COMPETITIONS.items():
 
         league_matches = grouped.get(
@@ -626,7 +540,6 @@ def build_message(matches):
         if not league_matches:
             continue
 
-        # مرتب‌سازی بر اساس زمان
         league_matches.sort(
             key=lambda x: x.get(
                 "utcDate",
@@ -634,7 +547,6 @@ def build_message(matches):
             )
         )
 
-        # عنوان لیگ وسط کادر
         lines.append(
             make_league_header(
                 competition["flag"],
@@ -644,7 +556,6 @@ def build_message(matches):
 
         lines.append("")
 
-        # بازی‌ها
         for match in league_matches:
 
             home_team = (
@@ -687,14 +598,12 @@ def build_message(matches):
 
             lines.append("")
 
-        # خط پایان لیگ
         lines.append(
             "━━━━━━━━━━━━━━━━"
         )
 
         lines.append("")
 
-    # حذف خطوط خالی انتهایی
     while (
         lines
         and not lines[-1].strip()
@@ -705,7 +614,214 @@ def build_message(matches):
 
 
 # ============================================================
-# ارسال پیام به تلگرام
+# وضعیت ارسال‌ها
+# ============================================================
+
+def load_state():
+
+    if not os.path.exists(
+        STATE_FILE
+    ):
+        return {
+            "date": "",
+            "results_sent": []
+        }
+
+    try:
+
+        with open(
+            STATE_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            state = json.load(f)
+
+        if state.get("date") != get_api_date():
+
+            return {
+                "date": get_api_date(),
+                "results_sent": []
+            }
+
+        return state
+
+    except Exception:
+
+        return {
+            "date": get_api_date(),
+            "results_sent": []
+        }
+
+
+def save_state(state):
+
+    with open(
+        STATE_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            state,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
+
+
+# ============================================================
+# آیا لیگ تمام شده؟
+# ============================================================
+
+def league_finished(
+    league_matches
+):
+
+    if not league_matches:
+        return False
+
+    for match in league_matches:
+
+        status = match.get(
+            "status",
+            ""
+        )
+
+        # اگر بازی هنوز شروع نشده
+        if status in [
+            "SCHEDULED",
+            "TIMED",
+            "IN_PLAY",
+            "PAUSED"
+        ]:
+            return False
+
+        # اگر بازی لغو شده، آن را تمام‌شده
+        # برای محاسبه نتایج روز در نظر نمی‌گیریم
+        if status == "POSTPONED":
+            return False
+
+        if status != "FINISHED":
+            return False
+
+    return True
+
+
+# ============================================================
+# ساخت پیام نتایج یک لیگ
+# ============================================================
+
+def build_results_message(
+    code,
+    matches
+):
+
+    competition = COMPETITIONS[
+        code
+    ]
+
+    matches = sorted(
+        matches,
+        key=lambda x: x.get(
+            "utcDate",
+            ""
+        )
+    )
+
+    lines = []
+
+    lines.append(
+        "🏁 <b>نتایج نهایی</b>"
+    )
+
+    lines.append("")
+
+    lines.append(
+        make_league_header(
+            competition["flag"],
+            competition["name"]
+        )
+    )
+
+    lines.append("")
+
+    for match in matches:
+
+        if match.get(
+            "status"
+        ) != "FINISHED":
+            continue
+
+        home_team = (
+            match.get(
+                "homeTeam",
+                {}
+            ).get(
+                "name",
+                "نامشخص"
+            )
+        )
+
+        away_team = (
+            match.get(
+                "awayTeam",
+                {}
+            ).get(
+                "name",
+                "نامشخص"
+            )
+        )
+
+        home = get_team_name(
+            home_team
+        )
+
+        away = get_team_name(
+            away_team
+        )
+
+        score = match.get(
+            "score",
+            {}
+        )
+
+        full_time = score.get(
+            "fullTime",
+            {}
+        )
+
+        home_score = full_time.get(
+            "home"
+        )
+
+        away_score = full_time.get(
+            "away"
+        )
+
+        if home_score is None:
+            home_score = 0
+
+        if away_score is None:
+            away_score = 0
+
+        lines.append(
+            f"🏟️ <b>{home}</b>"
+            f"    <b>{home_score} - {away_score}</b>"
+            f"    <b>{away}</b>"
+        )
+
+        lines.append("")
+
+    lines.append(
+        "━━━━━━━━━━━━━━━━"
+    )
+
+    return "\n".join(lines)
+
+
+# ============================================================
+# ارسال پیام تلگرام
 # ============================================================
 
 def send_message(message):
@@ -767,43 +883,169 @@ def send_message(message):
 
 
 # ============================================================
-# اجرای اصلی
+# بررسی و ارسال نتایج نهایی
+# ============================================================
+
+def check_and_send_results():
+
+    print(
+        "🏁 بررسی نتایج نهایی لیگ‌ها..."
+    )
+
+    today = get_api_date()
+
+    state = load_state()
+
+    if state.get("date") != today:
+
+        state = {
+            "date": today,
+            "results_sent": []
+        }
+
+    for code, competition in COMPETITIONS.items():
+
+        # اگر قبلاً امروز ارسال شده
+        if code in state["results_sent"]:
+
+            print(
+                f"⏭️ نتیجه {competition['name']} "
+                f"قبلاً ارسال شده."
+            )
+
+            continue
+
+        matches = fetch_matches(
+            code,
+            today,
+            today
+        )
+
+        if not matches:
+
+            print(
+                f"ℹ️ بازی‌ای برای "
+                f"{competition['name']} پیدا نشد."
+            )
+
+            continue
+
+        # بازی‌های لغوشده را کنار می‌گذاریم
+        valid_matches = [
+            match
+            for match in matches
+            if match.get("status")
+            != "CANCELLED"
+        ]
+
+        if not valid_matches:
+            continue
+
+        if not league_finished(
+            valid_matches
+        ):
+
+            print(
+                f"⏳ {competition['name']} "
+                f"هنوز تمام نشده."
+            )
+
+            continue
+
+        message = build_results_message(
+            code,
+            valid_matches
+        )
+
+        if send_message(message):
+
+            state["results_sent"].append(
+                code
+            )
+
+            save_state(state)
+
+            print(
+                f"✅ نتایج {competition['name']} "
+                f"ارسال شد."
+            )
+
+
+# ============================================================
+# برنامه اصلی
 # ============================================================
 
 def main():
 
     print(
-        "⏳ در حال دریافت "
-        "بازی‌های امروز..."
+        "⏳ شروع بررسی ربات..."
     )
 
+    # بازی‌های امروز
     matches = collect_matches()
 
-    if not matches:
+    # فقط اگر بازی امروز وجود دارد،
+    # پیام بازی‌های امروز ساخته می‌شود.
+    #
+    # برای جلوگیری از ارسال تکراری،
+    # در ادامه Workflow باید این بخش
+    # فقط یک بار در روز اجرا شود.
 
-        message = (
-            "⚽ <b>بازی‌های امروز</b>\n"
-            f"📅 {get_persian_date()} 🇮🇷\n\n"
-            "❌ بازی‌ای برای امروز "
-            "در ۶ لیگ پیدا نشد."
-        )
+    state = load_state()
+
+    today = get_api_date()
+
+    if state.get("date") != today:
+
+        state = {
+            "date": today,
+            "results_sent": []
+        }
+
+        save_state(state)
+
+    # فعلاً پیام بازی‌های امروز را فقط
+    # اگر فایل state تازه باشد ارسال می‌کنیم.
+    #
+    # اگر state قبلاً ساخته شده باشد،
+    # یعنی اجرای قبلی امروز انجام شده است.
+
+    if not state.get(
+        "today_message_sent",
+        False
+    ):
+
+        if matches:
+
+            message = build_message(
+                matches
+            )
+
+            if send_message(message):
+
+                state[
+                    "today_message_sent"
+                ] = True
+
+                save_state(state)
+
+        else:
+
+            print(
+                "❌ بازی‌ای برای امروز "
+                "پیدا نشد."
+            )
 
     else:
 
-        message = build_message(
-            matches
+        print(
+            "⏭️ پیام بازی‌های امروز "
+            "قبلاً ارسال شده."
         )
 
-    print()
-    print(message)
-    print()
+    # بررسی نتایج
+    check_and_send_results()
 
-    send_message(message)
-
-
-# ============================================================
-# شروع برنامه
-# ============================================================
 
 if __name__ == "__main__":
     main()
