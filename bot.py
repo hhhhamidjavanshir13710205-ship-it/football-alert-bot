@@ -35,6 +35,7 @@ TEHRAN_TZ = ZoneInfo("Asia/Tehran")
 # =========================================================
 
 COMPETITIONS = {
+
     "PL": {
         "name": "لیگ برتر انگلیس",
         "flag": "🏴"
@@ -68,6 +69,16 @@ COMPETITIONS = {
     "PPL": {
         "name": "لیگ پرتغال",
         "flag": "🇵🇹"
+    },
+
+    "BSA": {
+        "name": "سری آ برزیل",
+        "flag": "🇧🇷"
+    },
+
+    "CL": {
+        "name": "لیگ قهرمانان اروپا",
+        "flag": "🇪🇺"
     }
 }
 
@@ -78,7 +89,9 @@ COMPETITIONS = {
 
 TEAM_NAMES = {
 
-    # ================= ENGLAND =================
+    # =====================================================
+    # ENGLAND
+    # =====================================================
 
     "Chelsea FC": "چلسی",
     "Brentford FC": "برنتفورد",
@@ -100,12 +113,21 @@ TEAM_NAMES = {
     "Leicester City FC": "لسترسیتی",
     "Southampton FC": "ساوتهمپتون",
     "Ipswich Town FC": "ایپسویچ",
+    "Ipswich Town": "ایپسویچ",
+    "Hull City AFC": "هال سیتی",
+    "Hull City": "هال سیتی",
+    "Coventry City FC": "کاونتری سیتی",
+    "Coventry City": "کاونتری سیتی",
 
-    # ================= SPAIN =================
+    # =====================================================
+    # SPAIN
+    # =====================================================
 
     "FC Barcelona": "بارسلونا",
     "Real Madrid CF": "رئال مادرید",
+    "Real Madrid": "رئال مادرید",
     "Atletico Madrid": "اتلتیکومادرید",
+    "Club Atlético de Madrid": "اتلتیکومادرید",
     "Athletic Club": "اتلتیک بیلبائو",
     "Real Sociedad de Fútbol": "رئال سوسیداد",
     "Sevilla FC": "سویا",
@@ -123,11 +145,16 @@ TEAM_NAMES = {
     "CD Leganés": "لگانس",
     "RCD Espanyol de Barcelona": "اسپانیول",
     "Elche CF": "الچه",
+    "Real Racing Club de Santander": "راسینگ سانتاندر",
+    "Racing Santander": "راسینگ سانتاندر",
 
-    # ================= ITALY =================
+    # =====================================================
+    # ITALY
+    # =====================================================
 
     "FC Internazionale Milano": "اینتر",
     "Inter Milan": "اینتر",
+    "Inter": "اینتر",
     "AC Milan": "میلان",
     "Juventus FC": "یوونتوس",
     "SSC Napoli": "ناپولی",
@@ -136,6 +163,7 @@ TEAM_NAMES = {
     "Atalanta BC": "آتالانتا",
     "ACF Fiorentina": "فیورنتینا",
     "Bologna FC 1909": "بولونیا",
+    "Bologna": "بولونیا",
     "Torino FC": "تورینو",
     "Genoa CFC": "جنوا",
     "Udinese Calcio": "اودینزه",
@@ -147,18 +175,25 @@ TEAM_NAMES = {
     "Como 1907": "کومو",
     "AC Monza": "مونتزا",
     "US Sassuolo Calcio": "ساسولو",
+    "Venezia FC": "ونیزیا",
+    "Venezia": "ونیزیا",
 
-    # ================= GERMANY =================
+    # =====================================================
+    # GERMANY
+    # =====================================================
 
     "FC Bayern München": "بایرن مونیخ",
     "FC Bayern Munich": "بایرن مونیخ",
+    "Bayern Munich": "بایرن مونیخ",
     "Borussia Dortmund": "بوروسیا دورتموند",
     "RB Leipzig": "لایپزیگ",
     "Bayer 04 Leverkusen": "بایرلورکوزن",
+    "Bayer Leverkusen": "بایرلورکوزن",
     "Eintracht Frankfurt": "آینتراخت فرانکفورت",
     "VfB Stuttgart": "اشتوتگارت",
     "SC Freiburg": "فرایبورگ",
     "1. FSV Mainz 05": "ماینتس",
+    "Mainz 05": "ماینتس",
     "Borussia Mönchengladbach": "مونشن‌گلادباخ",
     "TSG 1899 Hoffenheim": "هوفنهایم",
     "VfL Wolfsburg": "ولفسبورگ",
@@ -168,17 +203,26 @@ TEAM_NAMES = {
     "1. FC Heidenheim 1846": "هایدنهایم",
     "FC St. Pauli 1910": "سن پائولی",
     "Holstein Kiel": "هولشتاین کیل",
+    "Hamburger SV": "هامبورگ",
+    "Hamburger SV II": "هامبورگ",
+    "1. FC Köln": "کلن",
+    "FC Cologne": "کلن",
 
-    # ================= FRANCE =================
+    # =====================================================
+    # FRANCE
+    # =====================================================
 
     "Paris Saint-Germain FC": "پاری‌سن‌ژرمن",
+    "Paris Saint-Germain": "پاری‌سن‌ژرمن",
     "Olympique de Marseille": "مارسی",
     "AS Monaco FC": "موناکو",
     "Olympique Lyonnais": "لیون",
     "Lille OSC": "لیل",
     "OGC Nice": "نیس",
     "Stade Rennais FC": "رن",
+    "Stade Rennais FC 1901": "رن",
     "RC Strasbourg Alsace": "استراسبورگ",
+    "RC Strasbourg": "استراسبورگ",
     "RC Lens": "لانس",
     "FC Nantes": "نانت",
     "Montpellier HSC": "مون‌پلیه",
@@ -188,28 +232,170 @@ TEAM_NAMES = {
     "AJ Auxerre": "اوسر",
     "AS Saint-Étienne": "سن‌اتین",
     "Angers SCO": "آنژه",
+    "Paris FC": "پاریس اف‌سی",
+    "Le Mans FC": "لو مان",
+    "FC Lorient": "لوریان",
+    "ES Troyes AC": "تروا",
 
-    # ================= NETHERLANDS =================
+    # =====================================================
+    # NETHERLANDS
+    # =====================================================
 
     "Ajax": "آژاکس",
+    "AFC Ajax": "آژاکس",
     "PSV": "پی‌اس‌وی",
+    "PSV Eindhoven": "پی‌اس‌وی",
     "Feyenoord Rotterdam": "فاینورد",
+    "Feyenoord": "فاینورد",
     "FC Utrecht": "اوترخت",
     "AZ": "آلکمار",
+    "AZ Alkmaar": "آلکمار",
     "FC Twente '65": "تونته",
+    "FC Twente": "تونته",
     "Go Ahead Eagles": "گو اهد ایگلز",
     "FC Groningen": "خرونینگن",
     "PEC Zwolle": "زووله",
     "SC Heerenveen": "هیرنفین",
     "N.E.C.": "نایمخن",
+    "NEC Nijmegen": "نایمخن",
     "Sparta Rotterdam": "اسپارتا روتردام",
+    "Sparta Rotterdam": "اسپارتا روتردام",
+    "ADO Den Haag": "آدو دن هاخ",
+    "ADO Den Haag FC": "آدو دن هاخ",
+    "SC Cambuur-Leeuwarden": "کامبور",
+    "SC Cambuur": "کامبور",
+    "SBV Excelsior": "اکسلسیور",
+    "Excelsior": "اکسلسیور",
+    "Willem II Tilburg": "ویلم دوم",
+    "Willem II": "ویلم دوم",
+    "Fortuna Sittard": "فورتونا سیتارد",
 
-    # ================= PORTUGAL =================
+    # =====================================================
+    # PORTUGAL
+    # =====================================================
 
     "SL Benfica": "بنفیکا",
+    "Benfica": "بنفیکا",
     "FC Porto": "پورتو",
+    "Porto": "پورتو",
     "Sporting CP": "اسپورتینگ",
+    "Sporting Clube de Portugal": "اسپورتینگ",
+    "Sporting Portugal": "اسپورتینگ",
     "SC Braga": "براگا",
+    "Braga": "براگا",
+    "CD Nacional": "ناسیونال",
+    "Nacional": "ناسیونال",
+    "FC Famalicão": "فامالیکائو",
+    "Famalicao": "فامالیکائو",
+    "Gil Vicente FC": "ژیل ویسنته",
+    "Gil Vicente": "ژیل ویسنته",
+    "CS Marítimo": "ماریتیمو",
+    "Maritimo": "ماریتیمو",
+    "FC Alverca": "آلورکا",
+    "Alverca": "آلورکا",
+    "Rio Ave FC": "ریو آوه",
+    "Rio Ave": "ریو آوه",
+    "FC Arouca": "آروکا",
+    "Arouca": "آروکا",
+
+    # =====================================================
+    # BRAZIL
+    # =====================================================
+
+    "CR Flamengo": "فلامنگو",
+    "Flamengo": "فلامنگو",
+    "SE Palmeiras": "پالمیراس",
+    "Palmeiras": "پالمیراس",
+    "Santos FC": "سانتوس",
+    "Santos": "سانتوس",
+    "São Paulo FC": "سائوپائولو",
+    "Sao Paulo": "سائوپائولو",
+    "SC Corinthians Paulista": "کورینتیانس",
+    "Corinthians": "کورینتیانس",
+    "Fluminense FC": "فلومیننزه",
+    "Fluminense": "فلومیننزه",
+    "Botafogo FR": "بوتافوگو",
+    "Botafogo": "بوتافوگو",
+    "CR Vasco da Gama": "واسکو دوگاما",
+    "Vasco da Gama": "واسکو دوگاما",
+    "Grêmio FBPA": "گرمیو",
+    "Gremio": "گرمیو",
+    "SC Internacional": "اینترناسیونال",
+    "Internacional": "اینترناسیونال",
+    "Cruzeiro EC": "کروزیرو",
+    "Cruzeiro": "کروزیرو",
+    "EC Bahia": "باهیا",
+    "Bahia": "باهیا",
+    "Fortaleza EC": "فورتالزا",
+    "Fortaleza": "فورتالزا",
+    "Athletico Paranaense": "اتلتیکو پارانائنزه",
+    "Athletico-PR": "اتلتیکو پارانائنزه",
+    "RB Bragantino": "ردبول براگانتیـنو",
+    "Bragantino": "براگانتیـنو",
+    "Cuiabá EC": "کویابا",
+    "Cuiaba": "کویابا",
+    "Atlético Mineiro": "اتلتیکو مینیرو",
+    "Atletico Mineiro": "اتلتیکو مینیرو",
+    "Vitoria SC": "وینتوریا",
+    "Vitória": "وینتوریا",
+
+    # =====================================================
+    # CHAMPIONS LEAGUE / EUROPE
+    # =====================================================
+
+    "Manchester City": "منچسترسیتی",
+    "Manchester United": "منچستریونایتد",
+    "Liverpool": "لیورپول",
+    "Arsenal": "آرسنال",
+    "Chelsea": "چلسی",
+    "Tottenham": "تاتنهام",
+    "Newcastle United": "نیوکاسل",
+    "Aston Villa": "استون ویلا",
+    "Real Madrid": "رئال مادرید",
+    "Barcelona": "بارسلونا",
+    "Atletico Madrid": "اتلتیکومادرید",
+    "Bayern Munich": "بایرن مونیخ",
+    "Borussia Dortmund": "بوروسیا دورتموند",
+    "Bayer Leverkusen": "بایرلورکوزن",
+    "Inter Milan": "اینتر",
+    "AC Milan": "میلان",
+    "Juventus": "یوونتوس",
+    "Napoli": "ناپولی",
+    "Paris Saint-Germain": "پاری‌سن‌ژرمن",
+    "Benfica": "بنفیکا",
+    "Porto": "پورتو",
+    "Sporting CP": "اسپورتینگ",
+    "Ajax": "آژاکس",
+    "PSV Eindhoven": "پی‌اس‌وی",
+    "Feyenoord": "فاینورد",
+    "RB Leipzig": "لایپزیگ",
+    "Atalanta": "آتالانتا",
+    "Monaco": "موناکو",
+    "Marseille": "مارسی",
+    "Club Brugge": "کلوب بروژ",
+    "Shakhtar Donetsk": "شاختار دونتسک",
+    "Galatasaray": "گالاتاسرای",
+    "Fenerbahçe": "فنرباغچه",
+    "Fenerbahce": "فنرباغچه",
+    "PSV": "پی‌اس‌وی",
+    "Celtic": "سلتیک",
+    "Rangers": "رنجرز",
+    "Red Bull Salzburg": "ردبول سالزبورگ",
+    "Salzburg": "سالزبورگ",
+    "Dinamo Zagreb": "دینامو زاگرب",
+    "Young Boys": "یانگ بویز",
+    "Benfica": "بنفیکا",
+    "Olympiacos": "المپیاکوس",
+    "Olympiacos FC": "المپیاکوس",
+    "Club Brugge KV": "کلوب بروژ",
+    "PSV Eindhoven": "پی‌اس‌وی",
+    "Slavia Praha": "اسلاویا پراگ",
+    "Sparta Praha": "اسپارتا پراگ",
+    "Bologna FC 1909": "بولونیا",
+    "Girona FC": "ژیرونا",
+    "Lille OSC": "لیل",
+    "Stuttgart": "اشتوتگارت",
+    "Monaco": "موناکو",
 }
 
 
@@ -219,7 +405,27 @@ TEAM_NAMES = {
 
 def get_team_name(name):
 
-    return TEAM_NAMES.get(name, name)
+    if not name:
+        return "نامشخص"
+
+    # حذف فاصله‌های اضافی
+    name = " ".join(str(name).split())
+
+    # ابتدا تطبیق مستقیم
+    if name in TEAM_NAMES:
+        return TEAM_NAMES[name]
+
+    # تطبیق بدون حساسیت به حروف
+    name_lower = name.lower()
+
+    for original, persian in TEAM_NAMES.items():
+
+        if original.lower() == name_lower:
+            return persian
+
+    # اگر نام پیدا نشد، فعلاً همان نام API برگردد
+    # تا اسم ناشناخته مشخص شود
+    return name
 
 
 # =========================================================
@@ -228,17 +434,7 @@ def get_team_name(name):
 
 def style_team_name(name):
 
-    name = get_team_name(name)
-
-    # فاصله برای ظاهر کشیده‌تر
-    replacements = {
-        " ": " ",
-    }
-
-    for old, new in replacements.items():
-        name = name.replace(old, new)
-
-    return name
+    return get_team_name(name)
 
 
 # =========================================================
@@ -445,7 +641,10 @@ def build_message(matches):
 
     lines = []
 
+    # =====================================================
     # عنوان
+    # =====================================================
+
     lines.append(
         "🏆 <b>بازی‌های امروز</b>"
     )
@@ -456,7 +655,10 @@ def build_message(matches):
 
     lines.append("")
 
+    # =====================================================
     # لیگ‌ها
+    # =====================================================
+
     for code, competition in COMPETITIONS.items():
 
         league_matches = grouped.get(
@@ -528,6 +730,7 @@ def build_message(matches):
 
         lines.append("")
 
+    # حذف خطوط خالی انتهایی
     while lines and not lines[-1].strip():
         lines.pop()
 
