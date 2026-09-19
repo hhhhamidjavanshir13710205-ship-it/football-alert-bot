@@ -1,5 +1,8 @@
 {
   "date": "2026-09-19",
-  "results_sent": [],
+  "results_sent": [
+    "PL",
+    "BL1"
+  ],
   "today_message_sent": true
 }
