@@ -15,31 +15,19 @@ jobs:
 
     steps:
 
-      # ================================
-      # دریافت فایل‌های پروژه
-      # ================================
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ================================
-      # نصب Python
-      # ================================
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # ================================
-      # نصب کتابخانه‌ها
-      # ================================
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests Pillow jdatetime
 
-      # ================================
-      # اجرای ربات فوتبال
-      # ================================
       - name: Run football bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -48,18 +36,6 @@ jobs:
         run: |
           python bot.py
 
-      # ================================
-      # اجرای بازار فوتسال
-      # ================================
-      - name: Run futsal market
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        run: |
-          python futsal_market.py
-
-      # ================================
-      # ذخیره وضعیت ربات
-      # ================================
       - name: Save bot state
         run: |
           git config user.name "github-actions[bot]"
